@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bluff Party</title>
+<style>
+  :root {
+    --bg:#14122b; --card:#221f45; --ink:#f4f2ff; --dim:#a9a5d6; --accent:#ffd23f; --accent2:#ff5d8f; --ok:#3ddc97; --line:#38346b;
+  }
+  @media (prefers-color-scheme: light) { :root { --bg:#f3f1ff; --card:#fff; --ink:#1d1a3d; --dim:#6a66a0; --line:#d9d5f5; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; min-height:100dvh; }
+  main { max-width:520px; margin:0 auto; padding:20px 16px calc(24px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:14px; min-height:100dvh; }
+  h1 { font-size:2.2rem; margin:8px 0 0; letter-spacing:-.02em; }
+  h1 span { color:var(--accent); }
+  h2 { margin:0; font-size:1.2rem; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; }
+  .dim { color:var(--dim); font-size:.9rem; }
+  input { width:100%; font:inherit; padding:14px; border-radius:12px; border:2px solid var(--line); background:transparent; color:var(--ink); }
+  input:focus { outline:none; border-color:var(--accent); }
+  #code { text-transform:uppercase; letter-spacing:.3em; text-align:center; font-weight:700; }
+  button { font:inherit; font-weight:700; border:0; border-radius:12px; padding:14px 18px; background:var(--accent); color:#1d1a3d; cursor:pointer; width:100%; }
+  button.alt { background:transparent; color:var(--ink); border:2px solid var(--line); }
+  button:disabled { opacity:.45; cursor:default; }
+  .row { display:flex; gap:10px; }
+  .roomcode { font-size:3rem; font-weight:800; letter-spacing:.2em; color:var(--accent); text-align:center; }
+  .q { font-size:1.35rem; font-weight:700; }
+  ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  li.p { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; border-radius:10px; background:rgba(127,127,200,.12); }
+  li.p.off { opacity:.45; }
+  .tag { font-size:.75rem; padding:2px 8px; border-radius:99px; background:var(--accent); color:#1d1a3d; font-weight:700; }
+  .tag.ok { background:var(--ok); }
+  .opt { text-align:left; background:var(--card); color:var(--ink); border:2px solid var(--line); }
+  .opt.mine { opacity:.5; }
+  .opt.picked { border-color:var(--accent); }
+  .opt.real { border-color:var(--ok); background:rgba(61,220,151,.15); }
+  .timer { height:6px; border-radius:3px; background:var(--line); overflow:hidden; }
+  .timer i { display:block; height:100%; background:var(--accent2); width:100%; transition:width .25s linear; }
+  .err { color:var(--accent2); min-height:1.4em; font-weight:600; }
+  .big { font-size:1.6rem; font-weight:800; }
+  .spacer { flex:1; }
+  .gain { color:var(--ok); font-weight:700; }
+  .podium li.p:first-child { background:var(--accent); color:#1d1a3d; font-weight:800; }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+(() => {
+  const app = document.getElementById('app');
+  const $ = (s, r = app) => r.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+    del(k) { try { localStorage.removeItem(k); } catch {} }
+  };
+
+  let ws, state = null, err = '', skew = 0, pendingJoin = null;
+  const urlCode = (new URLSearchParams(location.search).get('room') || location.pathname.slice(1)).toUpperCase().slice(0, 4);
+
+  function connect(first) {
+    ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host);
+    ws.onopen = () => {
+      const saved = JSON.parse(store.get('bluff-session') || 'null');
+      if (pendingJoin) { send(pendingJoin); }
+      else if (saved) send({ type: 'join', code: saved.code, playerId: saved.playerId, name: saved.name });
+      pendingJoin = null;
+    };
+    ws.onmessage = (e) => {
+      const m = JSON.parse(e.data);
+      if (m.type === 'joined') {
+        const s = JSON.parse(store.get('bluff-session') || '{}');
+        store.set('bluff-session', JSON.stringify({ code: m.code, playerId: m.playerId, name: s.name || nameField() }));
+        err = '';
+      } else if (m.type === 'state') {
+        skew = m.now - Date.now();
+        state = m; err = '';
+      } else if (m.type === 'error') {
+        err = m.message;
+        // a stale saved session shouldn't trap the user
+        if (!state) store.del('bluff-session');
+      } else if (m.type === 'kicked') {
+        store.del('bluff-session'); state = null; err = 'You were removed from the room.';
+      }
+      render();
+    };
+    ws.onclose = () => { setTimeout(() => connect(false), 1000); };
+  }
+  function send(o) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); else pendingJoin = o; }
+  let lastName = '';
+  const nameField = () => lastName;
+
+  function me() { return state.players.find((p) => p.id === state.you); }
+  const isHost = () => state && state.hostId === state.you;
+
+  function render() {
+    const focus = document.activeElement && document.activeElement.id;
+    const val = focus ? document.activeElement.value : null;
+    app.innerHTML = view();
+    bind();
+    if (focus && $('#' + focus)) { const el = $('#' + focus); el.value = val; el.focus(); }
+    tick();
+  }
+
+  function scoreList(players, showDone) {
+    return '<ul>' + [...players].sort((a, b) => b.score - a.score).map((p) =>
+      `<li class="p ${p.connected ? '' : 'off'}"><span>${esc(p.name)}${p.id === state.you ? ' (you)' : ''}${p.id === state.hostId ? ' 👑' : ''}</span>` +
+      `<span>${showDone && p.done ? '<span class="tag ok">done</span> ' : ''}${p.score}</span></li>`).join('') + '</ul>';
+  }
+
+  function view() {
+    if (!state) {
+      return `<h1>Bluff <span>Party</span></h1>
+      <p class="dim">Invent fake answers, fool your friends, spot the truth. 3–12 players, no sign-up.</p>
+      <div class="card" style="display:flex;flex-direction:column;gap:10px">
+        <input id="name" placeholder="Your name" maxlength="14" autocomplete="off" value="${esc(lastName)}">
+        <input id="code" placeholder="ROOM" maxlength="4" autocomplete="off" value="${esc(urlCode)}">
+        <button id="join">Join room</button>
+        <button id="create" class="alt">Create a new room</button>
+        <div class="err">${esc(err)}</div>
+      </div>`;
+    }
+    const s = state, host = isHost();
+    const timer = s.deadline ? '<div class="timer"><i id="bar"></i></div>' : '';
+    const head = s.phase === 'lobby' || s.phase === 'final' ? '' :
+      `<div class="dim">Room ${s.code} · Round ${s.round}/${s.rounds}</div>`;
+    switch (s.phase) {
+      case 'lobby': {
+        const link = location.origin + '/?room=' + s.code;
+        return `<h1>Bluff <span>Party</span></h1>
+        <div class="card"><div class="dim" style="text-align:center">Room code</div><div class="roomcode">${s.code}</div>
+        <button class="alt" id="share">Copy invite link</button></div>
+        <div class="card"><h2>Players (${s.players.length})</h2><div style="height:8px"></div>${scoreList(s.players)}</div>
+        <div class="spacer"></div>
+        ${host ? `<button id="start" ${s.players.length < s.minPlayers ? 'disabled' : ''}>${s.players.length < s.minPlayers ? `Need ${s.minPlayers - s.players.length} more player(s)` : 'Start game'}</button>`
+               : '<p class="dim" style="text-align:center">Waiting for the host to start…</p>'}
+        <div class="err">${esc(err)}</div>`;
+      }
+      case 'write':
+        return `${head}${timer}<div class="card q">${esc(s.question)}</div>
+        ${s.youWrote ? `<div class="card" style="text-align:center"><div class="big">Bluff locked in ✅</div><p class="dim">Waiting for the others…</p></div>`
+        : `<input id="bluff" maxlength="40" placeholder="Write a believable fake answer" autocomplete="off"><button id="submit">Submit bluff</button>`}
+        <div class="err">${esc(err)}</div>
+        <div class="card">${scoreList(s.players, true)}</div>`;
+      case 'vote':
+        return `${head}${timer}<div class="card q">${esc(s.question)}</div>
+        <p class="dim">${s.youVoted ? 'Vote cast. Waiting for the others…' : 'Which one is the real answer?'}</p>
+        ${s.options.map((o) => `<button class="opt ${o.mine ? 'mine' : ''}" data-opt="${o.id}" ${o.mine || s.youVoted ? 'disabled' : ''}>${esc(o.text)}${o.mine ? ' <span class="dim">(yours)</span>' : ''}</button>`).join('')}
+        <div class="card">${scoreList(s.players, true)}</div>`;
+      case 'reveal': {
+        const r = s.results;
+        return `${head}${timer}<div class="card q">${esc(s.question)}</div>
+        ${r.options.map((o) => `<div class="card opt ${o.real ? 'real' : ''}"><div class="big">${esc(o.text)} ${o.real ? '✅' : ''}</div>
+          <div class="dim">${o.real ? 'The real answer' : 'Bluff by ' + (o.authors.map(esc).join(', ') || '?')}</div>
+          <div>${o.voters.length ? 'Picked by ' + o.voters.map(esc).join(', ') : '<span class="dim">Nobody picked this</span>'}</div></div>`).join('')}
+        ${r.gains.length ? '<div class="card">' + r.gains.map((g) => `<div>${esc(g.name)} <span class="gain">+${g.gain}</span></div>`).join('') + '</div>' : ''}
+        <div class="card">${scoreList(s.players)}</div>`;
+      }
+      case 'final':
+        return `<h1>Game <span>over</span></h1>
+        <div class="card podium">${scoreList(s.players)}</div>
+        ${host ? '<button id="again">Play again</button>' : '<p class="dim" style="text-align:center">Waiting for the host to start another game…</p>'}
+        <button class="alt" id="leave">Leave room</button>`;
+    }
+    return '';
+  }
+
+  function bind() {
+    const on = (id, fn) => { const el = $('#' + id); if (el) el.onclick = fn; };
+    on('create', () => { lastName = $('#name').value; save(); send({ type: 'create', name: lastName }); });
+    on('join', () => { lastName = $('#name').value; save(); send({ type: 'join', code: $('#code').value, name: lastName }); });
+    on('start', () => send({ type: 'start' }));
+    on('again', () => send({ type: 'again' }));
+    on('leave', () => { store.del('bluff-session'); location.href = '/'; });
+    on('submit', submitBluff);
+    on('share', () => {
+      const link = location.origin + '/?room=' + state.code;
+      if (navigator.share) navigator.share({ title: 'Bluff Party', text: 'Join my game: room ' + state.code, url: link }).catch(() => {});
+      else if (navigator.clipboard) navigator.clipboard.writeText(link).then(() => { $('#share').textContent = 'Copied!'; });
+    });
+    const b = $('#bluff'); if (b) b.onkeydown = (e) => { if (e.key === 'Enter') submitBluff(); };
+    for (const n of ['name', 'code']) { const el = $('#' + n); if (el) el.onkeydown = (e) => { if (e.key === 'Enter') $('#join').click(); }; }
+    app.querySelectorAll('[data-opt]').forEach((el) => (el.onclick = () => send({ type: 'vote', option: +el.dataset.opt })));
+  }
+  const save = () => store.set('bluff-name', lastName);
+  function submitBluff() { const v = $('#bluff').value.trim(); if (v) send({ type: 'bluff', text: v }); }
+
+  function tick() {
+    const bar = $('#bar');
+    if (!bar || !state || !state.deadline) return;
+    const total = { write: 60000, vote: 30000, reveal: 9000 }[state.phase] || 30000;
+    const left = Math.max(0, state.deadline - (Date.now() + skew));
+    bar.style.width = (100 * left / total) + '%';
+  }
+  setInterval(tick, 250);
+
+  lastName = store.get('bluff-name') || '';
+  render();
+  connect(true);
+})();
+</script>
+</body>
+</html>
