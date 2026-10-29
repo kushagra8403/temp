@@ -1,0 +1,2305 @@
+<!doctype html>
+<html lang="en" data-industry="saas">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Build a Billion-Dollar Company</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a founder's ledger. A sticky ledger strip on top, tabbed working pages below,
+   and two small characters anchoring opposite bottom corners.
+   Each industry re-tints the whole ledger; colors stay muted and paper-like. */
+:root {
+  --paper: #edf1f2; --surface: #f8fafa; --raised: #ffffff; --ink: #1c2a30; --muted: #5b6b72; --line: #d2dbde;
+  --accent: #3d6c79; --accent-ink: #ffffff; --accent-soft: #dce7ea; --second: #8a7356;
+  --good: #4a7656; --good-soft: #e1ece3; --warn: #9a7533; --warn-soft: #f2e9d6; --bad: #9c524b; --bad-soft: #f3e2df;
+  --shadow: 0 1px 2px rgba(20, 30, 35, .06), 0 6px 20px rgba(20, 30, 35, .07);
+  --f-display: 'Young Serif', 'Iowan Old Style', Georgia, serif;
+  --f-ui: 'Instrument Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --f-prose: 'Spectral', 'Iowan Old Style', Georgia, serif;
+  --f-num: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --r: 10px; --r-sm: 7px;
+  color-scheme: light;
+}
+:root[data-industry="fintech"] { --paper: #edefe9; --surface: #f8f9f5; --ink: #1d2a22; --muted: #5a685e; --line: #d3d9cf; --accent: #3e6650; --accent-soft: #dde8e0; --second: #9a7d45; }
+:root[data-industry="consumer"] { --paper: #f2edef; --surface: #fbf8f9; --ink: #2c1f27; --muted: #6c5a64; --line: #e1d5da; --accent: #87536d; --accent-soft: #efdfe7; --second: #4e7787; }
+:root[data-industry="ecommerce"] { --paper: #f0ede5; --surface: #faf8f3; --ink: #2a251c; --muted: #696152; --line: #dfd7c8; --accent: #8c6630; --accent-soft: #efe4cf; --second: #4d6d5b; }
+:root[data-industry="hardware"] { --paper: #e9eaeb; --surface: #f6f6f6; --ink: #22262b; --muted: #5d636a; --line: #d3d6d9; --accent: #4c5a6b; --accent-soft: #dde2e8; --second: #a1733a; }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 var(--f-ui); -webkit-font-smoothing: antialiased; transition: background-color .4s ease; }
+body.modal-open { overflow: hidden; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 400; text-wrap: balance; margin: 0; letter-spacing: -.005em; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.muted { color: var(--muted); }
+.num, .tb-stats dd, .kv dd, .quote dd, .data td.num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+.eyebrow { font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin: 0 0 8px; }
+.prose { font-family: var(--f-prose); font-size: 17px; line-height: 1.55; max-width: 62ch; margin: 0 0 14px; }
+.fine { font-size: 13px; color: var(--muted); margin: 10px 0 0; max-width: 70ch; }
+.quiet { color: var(--muted); font-family: var(--f-prose); font-style: italic; font-size: 16px; margin: 0; }
+.link { background: none; border: 0; padding: 0; color: var(--accent); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-size: inherit; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); padding: 8px 14px; border-radius: var(--r-sm); font-weight: 600; font-size: 14px; cursor: pointer; transition: background-color .15s, border-color .15s, transform .1s; white-space: nowrap; }
+.btn:hover:not(:disabled) { border-color: var(--accent); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover:not(:disabled) { filter: brightness(1.07); }
+.btn.ghost { background: transparent; }
+.btn.small { padding: 5px 10px; font-size: 13px; }
+.btn.big { padding: 12px 22px; font-size: 16px; }
+.btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
+.danger-text { color: var(--bad); }
+select { border: 1px solid var(--line); background: var(--raised); border-radius: var(--r-sm); padding: 5px 8px; font-size: 13px; max-width: 100%; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+/* Pills */
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--accent-soft); color: var(--ink); border: 1px solid transparent; white-space: nowrap; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.accent { background: var(--accent); color: var(--accent-ink); }
+.pill.unknown { background: transparent; border: 1px dashed var(--muted); color: var(--muted); }
+.pill.tier-star { background: var(--ink); color: var(--paper); }
+.pill.tier-strong { background: var(--accent); color: var(--accent-ink); }
+.pill.tier-solid { background: var(--accent-soft); color: var(--ink); }
+.pill.tier-struggling { background: var(--warn-soft); color: var(--warn); }
+.pill.tier-under { background: var(--bad-soft); color: var(--bad); }
+
+/* ---------- Setup ---------- */
+/* Top-anchored centering: margin:auto inside a scrollable flex container, so a tall form never spills off the top. */
+.setup-scroll { min-height: 100vh; display: flex; overflow-y: auto; padding-block: 28px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.setup { margin: auto; width: 100%; max-width: 980px; display: grid; gap: 18px; }
+.setup-head h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.08; }
+.setup-head .lede { font-family: var(--f-prose); font-size: 17px; color: var(--muted); margin: 8px 0 0; max-width: 60ch; }
+.field { display: grid; gap: 7px; }
+.field > label, .label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.name-row { display: flex; gap: 8px; }
+.name-row input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--raised); border-radius: var(--r-sm); padding: 9px 12px; font-size: 16px; font-family: var(--f-display); }
+.industry-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.industry-card { text-align: left; display: grid; gap: 6px; align-content: start; padding: 12px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); cursor: pointer; transition: border-color .15s, background-color .3s, box-shadow .15s; }
+.industry-card:hover { border-color: var(--accent); }
+.industry-card.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--raised); }
+.ic-top { display: flex; align-items: center; gap: 8px; }
+.ic-name { font-family: var(--f-display); font-size: 17px; }
+.ic-blurb { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.ic-stats { display: flex; flex-wrap: wrap; gap: 4px 8px; font-family: var(--f-num); font-size: 11px; color: var(--muted); }
+.setup-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 18px; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; background: var(--surface); width: fit-content; max-width: 100%; }
+.seg button { border: 0; background: transparent; padding: 7px 14px; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--muted); border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button.on { background: var(--accent); color: var(--accent-ink); }
+.seg.small button { padding: 5px 11px; font-size: 13px; }
+.hint { margin: 0; font-size: 13.5px; color: var(--muted); max-width: 62ch; }
+.setup-foot { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-top: 14px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.setup-sum { margin: 0; font-size: 14px; color: var(--muted); max-width: 64ch; flex: 1 1 320px; }
+.setup-sum strong { color: var(--ink); }
+
+/* ---------- Game shell ---------- */
+.game { min-height: 100vh; padding-bottom: 150px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--surface); }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(150px, 1.1fr) minmax(180px, 1fr) auto auto; gap: 18px; align-items: center; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.tb-brand { min-width: 0; }
+.tb-name { font-family: var(--f-display); font-size: 21px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tb-meta { font-size: 12px; color: var(--muted); }
+.tb-clock { display: grid; gap: 5px; min-width: 0; }
+.tb-clock-row { display: flex; gap: 10px; align-items: center; font-size: 13px; flex-wrap: wrap; }
+.tb-clock-row span { color: var(--muted); }
+.clock-bar { position: relative; height: 6px; border-radius: 3px; background: var(--accent-soft); overflow: hidden; }
+.clock-fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 3px; transition: width .5s ease; }
+.clock-rec { position: absolute; top: 0; bottom: 0; background: var(--bad); opacity: .55; }
+.tb-stats { display: flex; gap: 18px; margin: 0; }
+.tb-stats div { display: grid; }
+.tb-stats dt { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.tb-stats dd { margin: 0; font-size: 15px; font-weight: 500; }
+.neg { color: var(--bad) !important; } .warn { color: var(--warn) !important; } .pos { color: var(--good) !important; }
+.advance { padding: 11px 18px; font-size: 15px; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; border-bottom: 1px solid var(--line); background: var(--paper); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); scrollbar-width: none; }
+.tab { border: 0; background: none; padding: 12px 14px 10px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; }
+.tab:hover { color: var(--ink); }
+.tab.on { color: var(--ink); border-bottom-color: var(--accent); }
+.tab-badge { background: var(--warn); color: #fff; font-size: 11px; border-radius: 999px; padding: 0 6px; line-height: 17px; }
+.tab-count { font-family: var(--f-num); font-size: 12px; color: var(--muted); }
+.tab-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.tab-body { max-width: 1240px; margin: 0 auto; padding-block: 20px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 16px; }
+.ov-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.col { display: grid; gap: 16px; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; min-width: 0; }
+.panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.panel-head h2 { font-size: 19px; }
+.panel-head .muted { font-size: 13px; }
+
+/* Events */
+.event { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 12px 14px; background: var(--raised); display: grid; gap: 8px; }
+.event + .event { margin-top: 10px; }
+.event.warn { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); background: color-mix(in srgb, var(--warn-soft) 55%, var(--raised)); }
+.event p { margin: 0; font-family: var(--f-prose); font-size: 16px; }
+.event-kind { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
+.event-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.event-note { font-size: 12.5px; color: var(--muted); }
+
+/* Statement & kv */
+.statement { width: 100%; border-collapse: collapse; font-size: 14px; }
+.statement th { text-align: left; font-weight: 400; padding: 5px 0; color: var(--muted); }
+.statement td { text-align: right; font-family: var(--f-num); padding: 5px 0; font-variant-numeric: tabular-nums; }
+.statement tr.sub th, .statement tr.sub td { color: var(--ink); border-top: 1px solid var(--line); }
+.statement tr.total th, .statement tr.total td { color: var(--ink); font-weight: 600; border-top: 1px solid var(--ink); }
+.kv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 16px; margin: 0; }
+.kv div { display: grid; gap: 1px; min-width: 0; }
+.kv dt { font-size: 12px; color: var(--muted); }
+.kv dd { margin: 0; font-size: 15px; }
+.goal { display: grid; gap: 6px; }
+.goal + .goal { margin-top: 12px; }
+.goal-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; flex-wrap: wrap; }
+.meter { height: 8px; background: var(--accent-soft); border-radius: 4px; overflow: hidden; }
+.meter span { display: block; height: 100%; background: var(--accent); border-radius: 4px; transition: width .5s ease; }
+.meter.alt span { background: var(--second); }
+
+/* Charts */
+.chart { width: 100%; height: auto; display: block; }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .grid.zero { stroke: var(--muted); stroke-opacity: .5; }
+.chart .tick { fill: var(--muted); font-family: var(--f-num); font-size: 10.5px; }
+.chart .line { fill: none; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.chart .area { opacity: .12; }
+.chart .rec-band { fill: var(--bad); opacity: .08; }
+.chart .dot { stroke: var(--surface); stroke-width: 2; }
+.chart-empty { color: var(--muted); font-style: italic; font-family: var(--f-prose); padding: 26px 0; text-align: center; }
+.legend { display: inline-flex; gap: 10px; align-items: center; font-size: 12.5px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; margin-right: -4px; }
+.spark { display: block; } .spark path { fill: none; stroke: var(--accent); stroke-width: 1.6; }
+.spark-empty { color: var(--muted); }
+
+/* Team */
+.hire-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.hire-card { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 12px; display: grid; gap: 6px; align-content: start; background: var(--raised); }
+.hire-name { font-family: var(--f-display); font-size: 16px; }
+.hire-role { font-size: 13px; color: var(--muted); }
+.hire-cost { font-family: var(--f-num); font-size: 12px; color: var(--muted); }
+.hire-card .btn { justify-self: start; }
+.team-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 13.5px; }
+.emp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+.emp { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: grid; gap: 9px; align-content: start; min-width: 0; }
+.emp.is-rough { border-color: color-mix(in srgb, var(--bad) 35%, var(--line)); }
+.emp-head { display: flex; justify-content: space-between; gap: 10px; }
+.emp-name { font-size: 18px; line-height: 1.2; }
+.emp-sub { font-size: 12.5px; color: var(--muted); }
+.emp-out { display: grid; text-align: right; font-size: 11px; color: var(--muted); }
+.emp-out .num { font-size: 16px; color: var(--ink); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.k { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-right: 4px; }
+.emp-skill, .emp-sales { font-size: 13.5px; display: grid; gap: 6px; }
+.emp-skill { display: block; }
+.emp-market { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.emp-risk { display: flex; align-items: center; gap: 8px; font-size: 12.5px; flex-wrap: wrap; }
+.risk-meter { width: 70px; height: 6px; background: var(--accent-soft); border-radius: 3px; overflow: hidden; }
+.risk-meter span { display: block; height: 100%; background: var(--good); }
+.risk-meter.r-watch span { background: var(--warn); } .risk-meter.r-high span { background: var(--bad); }
+.risk-label { font-weight: 600; } .risk-label.r-low { color: var(--good); } .risk-label.r-watch { color: var(--warn); } .risk-label.r-high { color: var(--bad); }
+.emp-request { font-size: 13px; background: var(--accent-soft); border-radius: var(--r-sm); padding: 6px 9px; }
+.emp-hist { list-style: none; margin: 0; padding: 8px 0 0; border-top: 1px dashed var(--line); display: grid; gap: 3px; font-family: var(--f-prose); font-size: 14px; }
+.emp-hist .when { font-family: var(--f-num); font-size: 10.5px; color: var(--muted); margin-right: 4px; }
+.emp-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.emp-actions select { flex: 1 1 110px; }
+.emp-foot { font-size: 12px; font-family: var(--f-num); }
+.confirm-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; background: var(--good-soft); border-radius: var(--r-sm); padding: 8px 10px; }
+.confirm-row.risky { background: var(--warn-soft); }
+.confirm-row p { margin: 0; flex: 1 1 100%; font-size: 13px; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; }
+.data { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.data th { text-align: left; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.data th.num, .data td.num { text-align: right; }
+.data td { padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.data tbody tr:hover { background: var(--accent-soft); }
+.data tfoot td { font-weight: 600; }
+.data tr.subtotal td { font-weight: 400; color: var(--muted); border-bottom: 0; padding-block: 4px; }
+.data tr.grand td { border-top: 1px solid var(--ink); border-bottom: 0; }
+.th-btn { background: none; border: 0; padding: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.th-btn.on { color: var(--ink); }
+.fit-mark { color: var(--good); font-weight: 700; }
+
+/* Product */
+.product-hero { display: grid; gap: 14px; }
+.ph-version { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.ph-v { font-family: var(--f-display); font-size: 56px; line-height: 1; color: var(--accent); }
+.ph-stage { font-family: var(--f-display); font-size: 22px; }
+.ladder { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 0; }
+.ladder li { flex: 1 1 90px; display: grid; gap: 2px; position: relative; padding-top: 14px; font-size: 12px; color: var(--muted); }
+.ladder li::before { content: ""; position: absolute; top: 4px; left: 0; right: 0; height: 2px; background: var(--line); }
+.ladder li.done::before { background: var(--accent); }
+.ladder .dot { position: absolute; top: 0; left: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); }
+.ladder li.done .dot { background: var(--accent); border-color: var(--accent); }
+.ladder li.cur .lname { color: var(--ink); font-weight: 600; }
+.ladder .lat { font-family: var(--f-num); font-size: 10.5px; }
+.releases { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-family: var(--f-prose); font-size: 15px; }
+.releases li { display: flex; gap: 10px; align-items: baseline; }
+.releases .muted { margin-left: auto; font-family: var(--f-ui); font-size: 12px; }
+
+/* Markets */
+.market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.market-card { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 12px; display: grid; gap: 8px; align-content: start; background: var(--raised); }
+.market-card.scout { border-style: dashed; border-color: var(--accent); background: var(--accent-soft); }
+.market-card .fine { margin: 0; }
+.mc-name { font-family: var(--f-display); font-size: 16px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.mc-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; margin: 0; font-size: 12.5px; }
+.mc-stats dt { color: var(--muted); } .mc-stats dd { margin: 0; font-family: var(--f-num); }
+.market-card .btn { justify-self: start; }
+
+/* Funding */
+.rounds { list-style: none; margin: 0; padding: 0; display: grid; }
+.rounds li { display: grid; grid-template-columns: 90px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); align-items: center; font-size: 14px; }
+.rounds li:last-child { border-bottom: 0; }
+.r-name { font-family: var(--f-display); font-size: 15px; }
+.rounds li:not(.done):not(.cur) .r-name { color: var(--muted); }
+.r-body { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.checks { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 7px; font-size: 14px; }
+.check-mark { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line); margin-right: 8px; font-size: 11px; vertical-align: -3px; }
+.checks li.ok .check-mark { background: var(--good); border-color: var(--good); color: #fff; }
+.cap { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 13.5px; }
+.cap li { display: grid; grid-template-columns: minmax(0, 1fr) 90px 56px; gap: 10px; align-items: center; }
+.cap li > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cap-bar { height: 6px; background: var(--accent-soft); border-radius: 3px; overflow: hidden; }
+.cap-bar span { display: block; height: 100%; background: var(--accent); }
+.cap .num { text-align: right; }
+
+/* Log */
+.log-q { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.log-q h3 { font-size: 15px; margin-bottom: 4px; }
+.log-q ul { margin: 0; padding-left: 18px; font-family: var(--f-prose); font-size: 15px; display: grid; gap: 2px; }
+.log-q li.k-good::marker { color: var(--good); } .log-q li.k-bad::marker, .log-q li.k-depart::marker, .log-q li.k-recession::marker { color: var(--bad); }
+
+/* ---------- Modals ---------- */
+#modal-root .backdrop { position: fixed; inset: 0; z-index: 60; background: rgba(25, 30, 35, .42); display: flex; overflow-y: auto; padding-block: max(24px, env(safe-area-inset-top, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); animation: fade .2s ease; }
+.modal { margin: auto; width: 100%; max-width: 640px; background: var(--surface); border-radius: 14px; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); padding: 24px 26px; animation: rise .25s ease; }
+.modal h2 { font-size: 26px; margin-bottom: 12px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.slider-block { display: grid; gap: 6px; margin: 6px 0 14px; }
+.slider-scale { position: relative; display: flex; justify-content: space-between; font-family: var(--f-num); font-size: 11.5px; color: var(--muted); height: 16px; }
+.slider-scale .band { position: absolute; top: -9px; height: 6px; background: var(--accent); opacity: .3; border-radius: 3px; }
+.quote { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; margin: 0; padding: 14px 16px; background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.quote dt { font-size: 12px; color: var(--muted); }
+.quote dd { margin: 0; font-size: 19px; }
+.fq-note { margin: 12px 0 0; font-size: 14px; }
+.fq-note.warn { color: var(--warn); font-weight: 600; } .fq-note.ok { color: var(--good); }
+.offer-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.offer { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 12px; display: grid; gap: 6px; align-content: start; background: var(--raised); }
+.offer-name { font-family: var(--f-display); font-size: 16px; }
+.offer-cost { font-size: 13px; }
+.offer-odds { font-family: var(--f-num); font-size: 13px; color: var(--accent); font-weight: 500; }
+.offer .btn { margin-top: 4px; }
+
+/* ---------- Mascots ---------- */
+.mascot { position: fixed; bottom: 0; z-index: 40; display: flex; flex-direction: column; gap: 8px; pointer-events: none; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
+.mascot > * { pointer-events: auto; }
+#advisor { left: 0; align-items: flex-start; padding-left: max(12px, env(safe-area-inset-left, 0px)); }
+#newsroom { right: 0; align-items: flex-end; padding-right: max(12px, env(safe-area-inset-right, 0px)); }
+.mascot-btn { position: relative; background: none; border: 0; padding: 0; cursor: pointer; display: grid; justify-items: center; gap: 0; }
+#advisor .mascot-btn { width: 128px; justify-items: start; }
+.mascot-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; background: var(--surface); border: 1px solid var(--line); padding: 0 7px; border-radius: 999px; }
+#advisor .mascot-label { margin-left: 8px; }
+.walker, .perch { position: relative; display: block; width: 64px; height: 64px; }
+.walker { animation: pace 16s ease-in-out infinite; }
+.walker.still { animation-play-state: paused; }
+.bob { display: block; animation: bob 1.1s ease-in-out infinite; transform-origin: 50% 100%; }
+.bob.slow { animation-duration: 3.2s; }
+.mascot-svg { display: block; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .06)); }
+.badge { position: absolute; top: -4px; right: -10px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; box-shadow: var(--shadow); animation: pulse 2.2s ease-in-out infinite; }
+.badge.count { right: -6px; background: var(--second); }
+@keyframes pace { 0%, 8% { transform: translateX(0); } 42%, 58% { transform: translateX(40px); } 92%, 100% { transform: translateX(0); } }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.bubble { width: min(330px, calc(100vw - 32px)); background: var(--raised); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 12px 14px; animation: rise .28s ease; display: grid; gap: 8px; }
+.bubble-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 13px; }
+.bubble-head .muted { font-size: 12px; }
+.bubble p { margin: 0; font-family: var(--f-prose); font-size: 15.5px; line-height: 1.45; }
+.bubble-foot { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+.x { background: none; border: 0; font-size: 18px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 2px; }
+.tips { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.tips li { font-family: var(--f-prose); font-size: 15px; line-height: 1.4; padding-left: 10px; border-left: 3px solid var(--accent-soft); display: grid; gap: 2px; justify-items: start; }
+.tips li.lv-urgent { border-left-color: var(--bad); } .tips li.lv-warn { border-left-color: var(--warn); } .tips li.lv-praise { border-left-color: var(--good); }
+.tips .link { font-family: var(--f-ui); font-size: 12.5px; }
+.news-card.k-bad, .news-card.k-depart, .news-card.k-recession { border-top: 3px solid var(--bad); }
+.news-card.k-good, .news-card.k-funding { border-top: 3px solid var(--good); }
+.news-card.k-rival { border-top: 3px solid var(--second); }
+.news-card.k-hire, .news-card.k-product, .news-card.k-market { border-top: 3px solid var(--accent); }
+
+/* Toast */
+#toast-root { position: fixed; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); z-index: 50; width: min(520px, calc(100vw - 32px)); pointer-events: none; }
+.toast { background: var(--ink); color: var(--paper); padding: 10px 14px; border-radius: 10px; font-size: 14px; box-shadow: var(--shadow); animation: rise .25s ease; text-align: center; }
+.toast.good { background: var(--good); color: #fff; } .toast.bad { background: var(--bad); color: #fff; }
+
+/* ---------- Report ---------- */
+.report-wrap { padding-block: 40px 60px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.report { max-width: 860px; margin: 0 auto; display: grid; gap: 22px; }
+.report h1 { font-size: clamp(34px, 6vw, 56px); line-height: 1.05; }
+.report h2 { font-size: 21px; margin-bottom: 10px; }
+.report-co { margin: -10px 0 0; color: var(--muted); font-size: 14px; }
+.report .lead { font-size: 19px; }
+.report-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 0; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.report-nums div { background: var(--surface); padding: 14px 16px; display: grid; gap: 2px; }
+.report-nums dt { font-size: 12px; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; }
+.report-nums dd { margin: 0; font-family: var(--f-num); font-size: 24px; font-variant-numeric: tabular-nums; }
+.recap { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-family: var(--f-prose); font-size: 16.5px; max-width: 68ch; }
+.report-actions { display: flex; justify-content: flex-start; }
+
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .topbar { grid-template-columns: minmax(0, 1fr) auto; }
+  .tb-clock { grid-column: 1 / -1; grid-row: 2; }
+  .tb-stats { grid-column: 1 / -1; grid-row: 3; flex-wrap: wrap; gap: 8px 18px; }
+  .advance { grid-column: 2; grid-row: 1; }
+  .industry-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 860px) {
+  .ov-grid { grid-template-columns: minmax(0, 1fr); }
+  .hire-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .setup-row { grid-template-columns: 1fr; }
+  .industry-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  body { font-size: 14px; }
+  .topbar { position: static; gap: 10px; }
+  .tb-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .industry-grid { grid-template-columns: 1fr; }
+  .ic-blurb { display: none; }
+  .offer-grid, .offer-grid.three { grid-template-columns: 1fr; }
+  .report-nums { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .quote { grid-template-columns: 1fr 1fr; }
+  .modal { padding: 18px; }
+  .walker, .perch { width: 48px; height: 48px; } .mascot-svg { width: 48px; height: 48px; }
+  #advisor .mascot-btn { width: 96px; }
+  #toast-root { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  @keyframes pace { 0%, 8% { transform: translateX(0); } 42%, 58% { transform: translateX(26px); } 92%, 100% { transform: translateX(0); } }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal-root" hidden></div>
+<div id="toast-root" aria-live="polite"></div>
+<div id="advisor" class="mascot" hidden></div>
+<div id="newsroom" class="mascot" hidden></div>
+<script>
+'use strict';
+/* =====================================================================
+   Build a Billion-Dollar Company — data tables
+   ===================================================================== */
+
+// ---------- Seedable RNG (mulberry32) so test runs are reproducible ----------
+let _seed = (Date.now() ^ 0x5f3759df) >>> 0;
+function setSeed(s) { _seed = s >>> 0; }
+function rand() {
+  _seed = (_seed + 0x6D2B79F5) | 0;
+  let t = Math.imul(_seed ^ (_seed >>> 15), 1 | _seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+const rr = (a, b) => a + rand() * (b - a);
+const ri = (a, b) => Math.floor(rr(a, b + 1));
+const pick = (arr) => arr[Math.floor(rand() * arr.length)];
+const chance = (p) => rand() < p;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const sum = (arr, f = (x) => x) => arr.reduce((a, x) => a + f(x), 0);
+
+// ---------- Industries ----------
+// arpu is monthly revenue per customer; churn is monthly; cac in dollars.
+const INDUSTRIES = {
+  saas: {
+    name: 'SaaS', unit: 'accounts', blurb: 'Subscription software for teams. Sticky customers and rich margins, but every account is earned.',
+    margin: 0.80, arpu: 120, churn: 0.025, cac: 900, multiple: 10, buildMult: 1.0, shipCost: 12000,
+    salesDeals: 18, supportCap: 1400, compliance: 0, ipoMult: 1.0, floorMult: 1.0, tam: 25000,
+    advisor: { kind: 'penguin', name: 'Pim', role: 'a very cool penguin' },
+    news: { kind: 'owl', name: 'Hollis', role: 'the night-desk owl' },
+  },
+  fintech: {
+    name: 'Fintech', unit: 'accounts', blurb: 'Money moves. Customers rarely leave once they trust you, but regulators cost real money every quarter.',
+    margin: 0.66, arpu: 95, churn: 0.018, cac: 950, multiple: 9, buildMult: 1.25, shipCost: 18000,
+    salesDeals: 15, supportCap: 1200, compliance: 9000, ipoMult: 1.1, floorMult: 0.95, tam: 30000,
+    advisor: { kind: 'fox', name: 'Vesper', role: 'a sharp-eyed fox' },
+    news: { kind: 'eagle', name: 'Aldous', role: 'the markets eagle' },
+  },
+  consumer: {
+    name: 'Consumer App', unit: 'users', blurb: 'A phone in every pocket. Cheap to acquire, cheap to lose. Volume and product polish are everything.',
+    margin: 0.86, arpu: 7, churn: 0.06, cac: 30, multiple: 6, buildMult: 0.85, shipCost: 10000,
+    salesDeals: 600, supportCap: 60000, compliance: 0, ipoMult: 1.3, floorMult: 0.9, tam: 1000000,
+    advisor: { kind: 'rabbit', name: 'Juniper', role: 'a very fast rabbit' },
+    news: { kind: 'parrot', name: 'Pepper', role: 'the gossip parrot' },
+  },
+  ecommerce: {
+    name: 'E-commerce', unit: 'shoppers', blurb: 'Boxes on doorsteps. Thin margins and fickle shoppers, but enormous volume if logistics keep up.',
+    margin: 0.32, arpu: 58, churn: 0.085, cac: 85, multiple: 2.6, buildMult: 0.9, shipCost: 9000,
+    salesDeals: 280, supportCap: 9000, compliance: 0, ipoMult: 2.2, floorMult: 0.7, tam: 140000,
+    advisor: { kind: 'bee', name: 'Bramble', role: 'a busy bee' },
+    news: { kind: 'squirrel', name: 'Nutmeg', role: 'the stockroom squirrel' },
+  },
+  hardware: {
+    name: 'Hardware', unit: 'customers', blurb: 'Things you can drop on your foot. High order values and loyal buyers, slow and costly build cycles.',
+    margin: 0.42, arpu: 260, churn: 0.014, cac: 1300, multiple: 4.5, buildMult: 1.8, shipCost: 22000,
+    salesDeals: 9, supportCap: 900, compliance: 4000, ipoMult: 1.6, floorMult: 0.8, tam: 9000,
+    advisor: { kind: 'robot', name: 'Bolt', role: 'a sturdy robot' },
+    news: { kind: 'dish', name: 'Relay', role: 'the satellite dish' },
+  },
+};
+
+const DIFFICULTY = {
+  beginner: { name: 'Beginner', blurb: 'More cash, kinder customers, cheaper people.', cash: 1100000, cac: 0.85, churn: 0.85, salary: 0.85, overhead: 0.8 },
+  standard: { name: 'Standard', blurb: 'The real thing. Every hire has to pull weight.', cash: 850000, cac: 1.1, churn: 1.1, salary: 1.0, overhead: 1.0 },
+};
+
+// Each horizon is a different kind of game: pace of rounds, size of the IPO bar,
+// how often buyers call, and how many downturns you must live through.
+const HORIZONS = {
+  5:  { turns: 20,  ipoARR: 20e6,  label: 'Sprint',   acqRate: 0.11,  acqPremium: 1.15, roundGap: 2, recessions: [{ sev: 0.5 }],
+        blurb: 'Five years. Raise early, grow hot, and find a buyer. An IPO is a long shot; a great acquisition is a real win.' },
+  10: { turns: 40,  ipoARR: 50e6,  label: 'Run',      acqRate: 0.075, acqPremium: 1.05, roundGap: 3, recessions: [{ sev: 0.8 }],
+        blurb: 'Ten years. Enough time for a Series C and a credible IPO if growth compounds. One real downturn.' },
+  15: { turns: 60,  ipoARR: 75e6,  label: 'Climb',    acqRate: 0.06,  acqPremium: 1.0,  roundGap: 3, recessions: [{ sev: 0.6 }, { sev: 0.9 }],
+        blurb: 'Fifteen years. Two downturns, a full funding ladder, and a team that turns over more than once.' },
+  20: { turns: 80,  ipoARR: 100e6, label: 'Long Game', acqRate: 0.05,  acqPremium: 1.0,  roundGap: 4, recessions: [{ sev: 0.7 }, { sev: 1.0 }],
+        blurb: 'Twenty years. The classic arc to a $100M ARR public company, with patience for slow-burn bets.' },
+  30: { turns: 120, ipoARR: 150e6, label: 'Dynasty',  acqRate: 0.045, acqPremium: 0.95, roundGap: 4, recessions: [{ sev: 0.6 }, { sev: 1.0 }, { sev: 0.8 }],
+        blurb: 'Thirty years. Three downturns and generations of employees. Build an institution, not a flip.' },
+};
+
+// Funding ladder. t5 is the unlock quarter in a 5-year game; longer games stretch it
+// (roughly with horizon^0.6) and the later rounds' ARR bars scale with the horizon's IPO bar.
+const ROUNDS = [
+  { key: 'seed', name: 'Seed',     t5: 1,  arrAbs: 0,      eq: [0.10, 0.20], floor: 8e6 },
+  { key: 'a',    name: 'Series A', t5: 3,  arrAbs: 400000, eq: [0.15, 0.25], floor: 22e6 },
+  { key: 'b',    name: 'Series B', t5: 7,  arrFrac: 0.030, eq: [0.12, 0.22], floor: 70e6 },
+  { key: 'c',    name: 'Series C', t5: 10, arrFrac: 0.120, eq: [0.10, 0.18], floor: 200e6 },
+  { key: 'd',    name: 'Series D', t5: 13, arrFrac: 0.280, eq: [0.08, 0.15], floor: 450e6 },
+  { key: 'e',    name: 'Series E', t5: 15, arrFrac: 0.500, eq: [0.05, 0.12], floor: 900e6 },
+];
+
+const INVESTORS = {
+  seed: ['Lantern Angels', 'Small Hours Capital', 'First Light Fund', 'Kettle Ventures'],
+  a: ['Meridian Partners', 'Northbound Ventures', 'Halyard Capital', 'Common Room VC'],
+  b: ['Atlas Growth', 'Bellwether Partners', 'Greystone Ventures', 'Tidewater Capital'],
+  c: ['Summit Crossover', 'Corvid Capital', 'Kingfisher Growth', 'Orchard Hill'],
+  d: ['Sovereign Lane', 'Pinnacle Fund IV', 'Ironbridge Partners', 'Cobalt Growth'],
+  e: ['Harbor Crossover', 'Lighthouse Pre-IPO', 'Monarch Capital', 'Evergreen Global'],
+};
+
+// ---------- Departments & skills (two skills per department) ----------
+const DEPTS = {
+  eng:   { name: 'Engineering', short: 'Eng',   salary: 125000, skills: ['Technical Builder', 'Rapid Prototyper'] },
+  sales: { name: 'Sales',       short: 'Sales', salary: 85000,  skills: ['Deal Closer', 'Relationship Builder'] },
+  mkt:   { name: 'Marketing',   short: 'Mktg',  salary: 95000,  skills: ['Storyteller', 'Growth Analyst'] },
+  ops:   { name: 'Operations',  short: 'Ops',   salary: 78000,  skills: ['Systems Operator', 'Customer Champion'] },
+};
+const DEPT_KEYS = Object.keys(DEPTS);
+const SKILLS = {
+  'Technical Builder':    { dept: 'eng',   note: 'ships solid code fast' },
+  'Rapid Prototyper':     { dept: 'eng',   note: 'turns ideas into demos overnight' },
+  'Deal Closer':          { dept: 'sales', note: 'gets signatures on paper' },
+  'Relationship Builder': { dept: 'sales', note: 'customers ask for them by name' },
+  'Storyteller':          { dept: 'mkt',   note: 'makes the product sound inevitable' },
+  'Growth Analyst':       { dept: 'mkt',   note: 'finds the cheap channels' },
+  'Systems Operator':     { dept: 'ops',   note: 'keeps the machine humming' },
+  'Customer Champion':    { dept: 'ops',   note: 'turns complaints into loyalty' },
+};
+const SKILL_FIT_MULT = 1.2;
+
+const TIERS = ['star', 'strong', 'solid', 'struggling', 'under'];
+const TIER_INFO = {
+  star:       { label: 'Star',           mult: 1.6 },
+  strong:     { label: 'Strong',         mult: 1.25 },
+  solid:      { label: 'Solid',          mult: 1.0 },
+  struggling: { label: 'Struggling',     mult: 0.7 },
+  under:      { label: 'Underperformer', mult: 0.45 },
+};
+const HIRE_DIST = [0.10, 0.22, 0.40, 0.18, 0.10];
+const TEMP_INFO = {
+  rough:     { label: 'Rough patch', mult: 0.6 },
+  hot:       { label: 'Hot streak',  mult: 1.35 },
+  motivated: { label: 'Motivated',   mult: 1.15 },
+};
+// Rough patches and hot streaks hit anyone, at the same odds regardless of tier.
+const TEMP_ODDS = { rough: 0.065, hot: 0.065 };
+const CALCIFY_CHANCE = 0.13;
+
+const SALES_TRAITS = {
+  home:   { label: 'Home-Turf Expert', note: 'unbeatable in their native market, out of place elsewhere' },
+  global: { label: 'Globally-Minded',  note: 'thrives when sent somewhere new' },
+};
+
+// ---------- Names ----------
+const FIRST_NAMES = ['Maya', 'Theo', 'Priya', 'Jonah', 'Ines', 'Kofi', 'Hana', 'Mateo', 'Saoirse', 'Arjun', 'Lena', 'Tobias',
+  'Amara', 'Felix', 'Yuki', 'Rafael', 'Noor', 'Elias', 'Wren', 'Dmitri', 'Zara', 'Caleb', 'Ottilie', 'Kwame', 'Ingrid',
+  'Sami', 'Beatriz', 'Ruben', 'Mei', 'Callum', 'Asha', 'Lior', 'Freya', 'Emeka', 'Clio'];
+const LAST_NAMES = ['Okafor', 'Lindqvist', 'Haddad', 'Moreau', 'Tanaka', 'Brennan', 'Castillo', 'Novak', 'Mensah', 'Adeyemi',
+  'Ferreira', 'Kowalski', 'Achterberg', 'Nakamura', 'Oyelaran', 'Sorensen', 'Delacroix', 'Iyer', 'Halloran', 'Petrov',
+  'Vance', 'Quispe', 'Abernathy', 'Ruiz', 'Whitlock', 'Osei', 'Marchetti', 'Kaur', 'Fenwick', 'Varga', 'Byrne',
+  'Takahashi', 'Ellery', 'Lindgren', 'Mbeki'];
+const NAME_MEMORY = 25;
+
+const COMPANY_A = ['Lantern', 'Harbor', 'Fieldnote', 'Copperleaf', 'Quillwork', 'Tidewell', 'Northstar', 'Bramblewood', 'Kestrel', 'Slate', 'Marigold', 'Ember', 'Juniper', 'Larkspur', 'Foxglove', 'Waypoint'];
+const COMPANY_B = ['Labs', 'Works', '& Co.', 'Systems', 'HQ', 'Collective', 'Industries', 'Studio'];
+const RIVAL_A = ['Northwind', 'Brightline', 'Ironclad', 'Bluefin', 'Copperhead', 'Silverback', 'Tallgrass', 'Granite', 'Vantage', 'Obsidian', 'Riptide', 'Sterling'];
+const RIVAL_B = ['Labs', 'Systems', 'Dynamics', 'Group', 'Technologies', 'Works', 'Partners'];
+const ACQUIRERS = ['Consolidated Global', 'Helix Holdings', 'Oberon Technologies', 'Meridian Group', 'Paragon Industries', 'Aster Corp', 'Vanguard Systems', 'Crestline Inc.', 'Monolith', 'Pacifica Holdings'];
+const OTHER_EMPLOYERS = ['a fast-growing startup', 'a big-tech giant', 'a well-funded competitor', 'a former boss’s new company', 'a consultancy that pays double'];
+
+const CODENAMES = ['Lantern', 'Kite', 'Bramble', 'Atlas', 'Harbor', 'Juniper', 'Comet', 'Thistle', 'Quarry', 'Fable', 'Orchard', 'Beacon',
+  'Cinder', 'Marlin', 'Tundra', 'Saffron', 'Pylon', 'Wicket', 'Halcyon', 'Ridge', 'Cobalt', 'Meadow', 'Sable', 'Vireo'];
+
+// Open-ended maturity ladder: no ceiling on product level.
+const STAGES = [
+  { at: 1, name: 'MVP' }, { at: 3, name: 'Early Product' }, { at: 5, name: 'Established' }, { at: 8, name: 'Mature' },
+  { at: 12, name: 'Best-in-Class' }, { at: 17, name: 'Category Leader' }, { at: 23, name: 'Platform' }, { at: 30, name: 'Institution' },
+];
+function stageFor(level) {
+  let cur = STAGES[0], next = null;
+  for (let i = 0; i < STAGES.length; i++) if (level >= STAGES[i].at) { cur = STAGES[i]; next = STAGES[i + 1] || null; }
+  if (!next) { // past the ladder: Legendary I, II, ... every 10 levels
+    const n = Math.floor((level - 30) / 10);
+    cur = n === 0 ? cur : { at: 30 + n * 10, name: 'Legendary ' + toRoman(n) };
+    next = { at: 30 + (n + 1) * 10, name: 'Legendary ' + toRoman(n + 1) };
+  }
+  return { cur, next };
+}
+function toRoman(n) {
+  const map = [[10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']]; let s = '';
+  for (const [v, r] of map) while (n >= v) { s += r; n -= v; }
+  return s;
+}
+
+// ---------- Markets ----------
+// size: share of reachable demand; growth: acquisition efficiency & headroom; arpu: price multiplier.
+const CURATED_MARKETS = [
+  { name: 'United States',        size: 1.6,  growth: 1.0,  arpu: 1.0,  entry: 0,      overhead: 0, home: true },
+  { name: 'Canada',               size: 0.45, growth: 0.95, arpu: 0.95, entry: 60000,  overhead: 9000 },
+  { name: 'United Kingdom',       size: 0.7,  growth: 0.8,  arpu: 1.05, entry: 110000, overhead: 16000 },
+  { name: 'Germany',              size: 0.75, growth: 0.78, arpu: 1.08, entry: 140000, overhead: 18000 },
+  { name: 'France',               size: 0.6,  growth: 0.8,  arpu: 0.98, entry: 120000, overhead: 16000 },
+  { name: 'The Nordics',          size: 0.35, growth: 0.85, arpu: 1.15, entry: 90000,  overhead: 13000 },
+  { name: 'Netherlands',          size: 0.3,  growth: 0.9,  arpu: 1.05, entry: 70000,  overhead: 11000 },
+  { name: 'Australia',            size: 0.4,  growth: 0.95, arpu: 1.0,  entry: 90000,  overhead: 13000 },
+  { name: 'Japan',                size: 0.8,  growth: 0.7,  arpu: 1.1,  entry: 200000, overhead: 24000 },
+  { name: 'South Korea',          size: 0.45, growth: 0.95, arpu: 0.9,  entry: 120000, overhead: 15000 },
+  { name: 'Singapore',            size: 0.2,  growth: 1.05, arpu: 1.0,  entry: 60000,  overhead: 10000 },
+  { name: 'United Arab Emirates', size: 0.25, growth: 1.1,  arpu: 1.05, entry: 90000,  overhead: 14000 },
+  { name: 'Brazil',               size: 0.7,  growth: 1.35, arpu: 0.5,  entry: 100000, overhead: 12000 },
+  { name: 'Mexico',               size: 0.55, growth: 1.3,  arpu: 0.52, entry: 80000,  overhead: 10000 },
+  { name: 'India',                size: 1.2,  growth: 1.6,  arpu: 0.3,  entry: 120000, overhead: 11000 },
+  { name: 'Indonesia',            size: 0.7,  growth: 1.55, arpu: 0.33, entry: 80000,  overhead: 8000 },
+  { name: 'Nigeria',              size: 0.5,  growth: 1.7,  arpu: 0.28, entry: 60000,  overhead: 7000 },
+];
+const SCOUT_ADJ = ['Northern', 'Southern', 'Eastern', 'Western', 'Coastal', 'Inland', 'Upper', 'Lower', 'Golden', 'Amber', 'Silver',
+  'Emerald', 'Outer', 'Central', 'Highland', 'Lowland', 'Riverine', 'Lakeside', 'Windward', 'Leeward'];
+const SCOUT_NOUN = ['Corridor', 'Basin', 'Reach', 'Plateau', 'Coast', 'Delta', 'Highlands', 'Archipelago', 'Provinces', 'Valley',
+  'Steppe', 'Isthmus', 'Peninsula', 'Belt', 'Expanse', 'Marches', 'Littoral', 'Territories', 'Frontier', 'Shelf'];
+const SCOUT_BASE_COST = 25000;
+
+/* =====================================================================
+   Engine: state, quarter resolution, employees, markets, funding
+   ===================================================================== */
+let S = null; // the whole game state lives here
+
+const IND = () => INDUSTRIES[S.industry];
+const DIF = () => DIFFICULTY[S.difficulty];
+const HOR = () => HORIZONS[S.horizon];
+
+// ---------- Helpers on state ----------
+const homeMarket = () => S.markets.find((m) => m.home);
+const enteredMarkets = () => S.markets.filter((m) => m.entered);
+const marketById = (id) => S.markets.find((m) => m.id === id);
+const empById = (id) => S.employees.find((e) => e.id === id);
+const totalCustomers = () => sum(enteredMarkets(), (m) => m.customers);
+const totalRevenue = () => sum(enteredMarkets(), (m) => m.revenue);
+const currentARR = () => totalRevenue() * 4;
+const yearOf = (turn) => Math.floor(turn / 4) + 1;
+const quarterOf = (turn) => (turn % 4) + 1;
+const wageIndex = () => 1 + 0.015 * Math.floor(S.turn / 4);
+// Each release helps, with diminishing returns (but never zero).
+const productArpuMult = (level = S.product.level) => 1 + 0.5 * Math.log(1 + (level - 1) / 6);
+const productChurnMult = (level = S.product.level) => Math.max(0.65, Math.pow(0.965, level - 1));
+const marketARPU = (m) => IND().arpu * productArpuMult() * m.arpu;
+const ipoARRRequired = () => HOR().ipoARR * IND().ipoMult;
+const recessionNow = (turn = S.turn) => S.recessions.find((r) => turn >= r.start && turn < r.end) || null;
+const shipCost = (level = S.product.level) => Math.round(3 * Math.pow(1.2, level - 1) * IND().buildMult * 10) / 10;
+const shipCash = (level = S.product.level) => Math.round(IND().shipCost * (1 + 0.25 * (level - 1)));
+const isFit = (e) => SKILLS[e.skill].dept === e.dept;
+const tierIdx = (t) => TIERS.indexOf(t);
+const quartersSinceRecog = (e) => S.turn - e.lastRecog;
+const tenure = (e) => S.turn - e.hiredTurn;
+const clapBudget = () => Math.max(3, Math.ceil(S.employees.length / 5));
+const scoutCost = () => Math.round(SCOUT_BASE_COST * Math.pow(1.15, S.scoutCount) / 1000) * 1000;
+const hireFee = (salary) => Math.round(salary * 0.1 / 500) * 500;
+const bonusCost = (e) => Math.max(2000, Math.round(e.salary * 0.08 / 500) * 500);
+const severance = (e) => Math.round(e.salary * 0.15 / 500) * 500;
+const marketChurnMult = (m) => clamp(1.15 - 0.15 * m.arpu, 0.95, 1.12);
+// Addressable customers in a market; a better product widens it a little.
+const marketTAM = (m) => IND().tam * m.size * (1 + 0.04 * (S.product.level - 1));
+const penetration = (m) => m.customers / marketTAM(m);
+
+function log(kind, text) { S.log.push({ turn: S.turn, kind, text }); }
+function news(text, kind = 'info') { S.newsQueue.push({ text, kind, turn: S.turn }); log(kind, text); }
+function addHistory(e, text) { e.history.push({ turn: S.turn, text }); if (e.history.length > 8) e.history.shift(); }
+function spend(amount, why) { S.cash -= amount; S.qOneTime += amount; S.qOneTimeItems.push({ why, amount }); }
+
+// ---------- Name generation (no repeats within the last ~25 hires) ----------
+function genName() {
+  const recentF = S.recentFirst.slice(-NAME_MEMORY), recentL = S.recentLast.slice(-NAME_MEMORY);
+  let first, last;
+  const onTeam = new Set(S.employees.map((e) => e.name));
+  const ok = (strict) => !onTeam.has(first + ' ' + last) && !S.usedNames.slice(-NAME_MEMORY * 4).includes(first + ' ' + last) && (!strict || (!recentF.includes(first) && !recentL.includes(last)));
+  let found = false;
+  for (let i = 0; i < 120 && !found; i++) { first = pick(FIRST_NAMES); last = pick(LAST_NAMES); found = ok(true); }
+  for (let i = 0; i < 400 && !found; i++) { first = pick(FIRST_NAMES); last = pick(LAST_NAMES); found = ok(false); }
+  S.recentFirst.push(first); S.recentLast.push(last); S.usedNames.push(first + ' ' + last);
+  return { first, last };
+}
+function genCompanyName() { return pick(COMPANY_A) + ' ' + pick(COMPANY_B); }
+
+function rollTier(dist) {
+  let r = rand(), acc = 0;
+  for (let i = 0; i < TIERS.length; i++) { acc += dist[i]; if (r < acc) return TIERS[i]; }
+  return 'solid';
+}
+
+// ---------- Employees ----------
+function makeEmployee(dept, opts = {}) {
+  const { first, last } = genName();
+  const skillDept = chance(0.6) ? dept : pick(DEPT_KEYS.filter((d) => d !== dept));
+  const skill = pick(DEPTS[skillDept].skills);
+  const salary = Math.round(DEPTS[dept].salary * DIF().salary * rr(0.88, 1.12) * wageIndex() / 1000) * 1000;
+  const e = {
+    id: S.nextId++, first, last, name: `${first} ${last}`, dept, origDept: dept, skill,
+    tier: rollTier(HIRE_DIST), revealed: false, hiredTurn: S.turn, deptSince: S.turn, salary,
+    temp: null, lastRecog: S.turn, grievance: 0, history: [], dip: 0, lastRaiseTurn: S.turn,
+    bonusReadyTurn: S.turn, clapReadyTurn: S.turn, request: null, trait: null, market: null, nativeMarket: null,
+  };
+  if (dept === 'sales') setupSalesRep(e, opts.market);
+  addHistory(e, `Joined ${DEPTS[dept].name}${e.market != null ? ' in ' + marketById(e.market).name : ''}`);
+  return e;
+}
+function setupSalesRep(e, marketId) {
+  if (!e.trait) e.trait = chance(0.5) ? 'home' : 'global';
+  const m = marketId != null && marketById(marketId) && marketById(marketId).entered ? marketId : homeMarket().id;
+  e.market = m;
+  if (e.nativeMarket == null) e.nativeMarket = m;
+}
+function traitMult(e) {
+  if (e.dept !== 'sales' || e.market == null) return 1;
+  const native = e.market === e.nativeMarket;
+  if (e.trait === 'home') return native ? 1.25 : 0.8;
+  return native ? 0.95 : 1.15;
+}
+function traitFitText(e, marketId) {
+  const native = marketId === e.nativeMarket;
+  const nm = marketById(e.nativeMarket).name;
+  if (e.trait === 'home') return native ? { ok: true, text: `Back on home turf in ${nm}. This fits them.` } : { ok: false, text: `A gamble. Home-turf experts tend to struggle away from ${nm}.` };
+  return native ? { ok: false, text: `Fine, but globally-minded reps get restless at home.` } : { ok: true, text: `Fits their trait. Globally-minded reps do their best work somewhere new.` };
+}
+
+function empOutput(e) {
+  let m = TIER_INFO[e.tier].mult;
+  if (e.temp) m *= TEMP_INFO[e.temp.type].mult;
+  if (isFit(e)) m *= SKILL_FIT_MULT;
+  if (S.turn === e.hiredTurn) m *= 0.5; // onboarding quarter
+  if (e.dip > 0) m *= 0.75;            // settling after a move
+  m *= traitMult(e);
+  return m;
+}
+
+function flightRisk(e) {
+  if (tenure(e) < 2) return 3;
+  const since = quartersSinceRecog(e);
+  let r = 5 + Math.min(27, Math.max(0, since - 2) * 3);
+  r += { star: 14, strong: 7, solid: 2, struggling: 0, under: -2 }[e.tier];
+  if (e.temp && e.temp.type === 'rough') r += 8;
+  if (e.temp && e.temp.type === 'motivated') r -= 12;
+  if (e.temp && e.temp.type === 'hot') r -= 4;
+  r += e.grievance;
+  if (S.turn - e.lastRaiseTurn > 12) r += 5;
+  return clamp(Math.round(r), 0, 95);
+}
+const riskLabel = (r) => (r >= 35 ? 'High' : r >= 20 ? 'Watch' : 'Low');
+
+function hire(dept, marketId) {
+  const e = makeEmployee(dept, { market: marketId });
+  spend(hireFee(e.salary), `Recruiting ${e.name}`);
+  S.employees.push(e);
+  S.stats.hires++;
+  news(`${e.name} joins ${DEPTS[dept].name}${e.market != null ? ' covering ' + marketById(e.market).name : ''}. Tier unknown until their first quarter is in.`, 'hire');
+  return e;
+}
+
+function removeEmployee(e, how) {
+  S.employees = S.employees.filter((x) => x.id !== e.id);
+  S.events = S.events.filter((ev) => ev.empId !== e.id);
+  S.former.push({ name: e.name, tier: e.tier, dept: e.dept, how, turn: S.turn });
+  // A strong ex-employee may land at the rival, which makes them tougher to compete with.
+  if ((e.tier === 'star' || e.tier === 'strong') && chance(e.tier === 'star' ? 0.55 : 0.4)) {
+    const bump = e.tier === 'star' ? 0.04 : 0.025;
+    S.rival.strength = Math.min(0.25, S.rival.strength + bump);
+    S.rival.alumni.push(e.name);
+    S.stats.toRival++;
+    news(`${e.name} has signed with ${S.rival.name}. Expect them to be a little harder to beat.`, 'rival');
+    S.rival.pending.push({ turn: S.turn + ri(2, 5), name: e.name, dept: e.dept });
+  }
+}
+
+function fire(e) {
+  spend(severance(e), `Severance for ${e.name}`);
+  S.stats.fires++;
+  const label = e.revealed ? TIER_INFO[e.tier].label.toLowerCase() : 'unproven';
+  news(`${e.name} (${label}, ${DEPTS[e.dept].name}) has been let go.`, 'depart');
+  removeEmployee(e, 'fired');
+  S.employees.forEach((x) => { x.grievance = Math.min(20, x.grievance + 2); });
+}
+
+function giveBonus(e) {
+  const cost = bonusCost(e);
+  spend(cost, `Bonus for ${e.name}`);
+  e.bonusReadyTurn = S.turn + 2;
+  e.lastRecog = S.turn;
+  e.grievance = Math.max(0, e.grievance - 6);
+  S.stats.bonuses++;
+  S.events = S.events.filter((ev) => !(ev.type === 'overlooked' && ev.empId === e.id));
+  let msg;
+  if (e.temp && e.temp.type === 'rough') {
+    if (chance(0.7)) { e.temp = { type: 'motivated', left: 2, reason: 'bonus' }; msg = `${e.first} is out of the rough patch. The bonus landed. Motivated for 2 quarters.`; addHistory(e, 'Bonus pulled them out of a rough patch'); }
+    else { msg = `${e.first} appreciated it, but the rough patch hasn't lifted yet.`; addHistory(e, 'Bonus during a rough patch'); }
+  } else if (e.temp && e.temp.type === 'hot') {
+    e.temp.left += 1; msg = `${e.first} is riding high. The hot streak runs a quarter longer.`; addHistory(e, 'Bonus extended a hot streak');
+  } else {
+    e.temp = { type: 'motivated', left: 2, reason: 'bonus' }; msg = `${e.first} felt genuinely valued. Motivated for 2 quarters.`; addHistory(e, 'Received a bonus');
+  }
+  return msg;
+}
+
+function giveClap(e) {
+  if (S.clapsUsed >= clapBudget()) return null;
+  S.clapsUsed++;
+  e.clapReadyTurn = S.turn + 3;
+  e.lastRecog = S.turn;
+  e.grievance = Math.max(0, e.grievance - 2);
+  S.stats.claps++;
+  S.events = S.events.filter((ev) => !(ev.type === 'overlooked' && ev.empId === e.id));
+  let msg;
+  if (e.temp && e.temp.type === 'rough') {
+    if (chance(0.3)) { e.temp = { type: 'motivated', left: 1, reason: 'clap' }; msg = `A public thank-you was exactly what ${e.first} needed. Rough patch over.`; addHistory(e, 'Public praise lifted a rough patch'); }
+    else { msg = `${e.first} smiled, but it'll take more than applause to turn this around.`; addHistory(e, 'Applauded during a rough patch'); }
+  } else if (!e.temp && chance(0.4)) {
+    e.temp = { type: 'motivated', left: 1, reason: 'clap' }; msg = `${e.first} lit up. Motivated for a quarter.`; addHistory(e, 'Applauded at all-hands');
+  } else { msg = `${e.first} appreciated the shout-out.`; addHistory(e, 'Applauded at all-hands'); }
+  return msg;
+}
+
+// Transfer: a real gamble with a fresh performance roll, hidden until next quarter.
+function transferOdds(e, dept) {
+  const fit = SKILLS[e.skill].dept === dept;
+  const dist = fit ? [0.18, 0.30, 0.34, 0.12, 0.06] : [0.08, 0.20, 0.40, 0.20, 0.12];
+  const keep = tierIdx(e.tier) <= 2 ? 1 : 0;
+  const good = 0.4 * keep + 0.6 * (dist[0] + dist[1] + dist[2]);
+  return { fit, dist, good };
+}
+function transfer(e, dept, initiatedBy = 'you') {
+  if (dept === e.dept) return;
+  const { dist } = transferOdds(e, dept);
+  const from = e.dept;
+  e.prevTier = e.tier;
+  if (!chance(0.4)) e.tier = rollTier(dist);
+  e.dept = dept; e.deptSince = S.turn; e.revealed = false; e.dip = 1;
+  if (e.temp && e.temp.type !== 'motivated') e.temp = null;
+  if (dept === 'sales') setupSalesRep(e, homeMarket().id); else e.market = null;
+  e.request = null;
+  S.events = S.events.filter((ev) => !(ev.type === 'transfer' && ev.empId === e.id));
+  S.stats.transfers++;
+  addHistory(e, `Transferred ${DEPTS[from].short} → ${DEPTS[dept].short}${initiatedBy === 'request' ? ' (their request)' : ''}`);
+  news(`${e.name} moves from ${DEPTS[from].name} to ${DEPTS[dept].name}. We'll know next quarter whether it suits them.`, 'team');
+}
+function reassignMarket(e, marketId) {
+  if (e.dept !== 'sales' || marketId === e.market) return null;
+  const fit = traitFitText(e, marketId);
+  e.market = marketId; e.dip = 1;
+  addHistory(e, `Reassigned to ${marketById(marketId).name}`);
+  S.stats.reassigns++;
+  return fit;
+}
+
+// ---------- Markets ----------
+function makeMarket(def, idx) {
+  return {
+    id: idx, name: def.name, size: def.size, growth: def.growth, arpu: def.arpu, entry: def.entry, overhead: def.overhead,
+    home: !!def.home, scouted: !!def.scouted, entered: !!def.home, enteredTurn: def.home ? 0 : null,
+    customers: 0, revenue: 0, newCust: 0, churned: 0, lastSpend: 0, hist: [], profitHist: [],
+  };
+}
+function marketRamp(m) {
+  const q = S.turn - m.enteredTurn;
+  return q <= 0 ? 0.5 : q === 1 ? 0.8 : 1;
+}
+function enterMarket(m) {
+  if (m.entered) return;
+  spend(m.entry, `Entering ${m.name}`);
+  m.entered = true; m.enteredTurn = S.turn;
+  S.stats.marketsEntered++;
+  news(`${S.company} opens for business in ${m.name}. Local partners are lined up and the first ads go live this quarter.`, 'market');
+}
+function scoutMarket() {
+  const cost = scoutCost();
+  spend(cost, 'Scouting a new market');
+  S.scoutCount++;
+  let name;
+  for (let i = 0; i < 60; i++) { name = `The ${pick(SCOUT_ADJ)} ${pick(SCOUT_NOUN)}`; if (!S.markets.some((m) => m.name === name)) break; }
+  if (S.markets.some((m) => m.name === name)) name = `${name} ${S.scoutCount + 1}`;
+  const t = rand(); // 0 = frontier, 1 = mature
+  const arpu = Math.round((0.25 + 0.85 * t) * 100) / 100;
+  const growth = Math.round(clamp(1.75 - 0.95 * t + rr(-0.1, 0.1), 0.6, 1.85) * 100) / 100;
+  const size = Math.round(rr(0.15, 0.7) * 100) / 100;
+  const def = {
+    name, size, growth, arpu, scouted: true,
+    entry: Math.round((40000 + 160000 * arpu * size + rr(0, 30000)) / 5000) * 5000,
+    overhead: Math.round((5000 + 15000 * arpu * (0.6 + size)) / 500) * 500,
+  };
+  const m = makeMarket(def, S.markets.length);
+  S.markets.push(m);
+  news(`Scouts report back on ${name}: ${t < 0.4 ? 'a frontier market, cheap to win and quick to grow, with low prices' : t < 0.7 ? 'a balanced market with fair prices and steady demand' : 'a mature market where customers pay well but growth is slow'}.`, 'market');
+  return m;
+}
+function marketStatus(m) {
+  if (!m.entered) return null;
+  if (S.turn - m.enteredTurn < 3) return { key: 'new', label: 'Ramping up' };
+  const recent = m.profitHist.slice(-3);
+  if (recent.length >= 3 && recent.every((p) => p < 0)) return { key: 'bad', label: 'Struggling' };
+  const h = m.hist; const g = h.length >= 3 ? h[h.length - 1] / Math.max(1, h[h.length - 3]) - 1 : 0;
+  if (g > 0.15) return { key: 'good', label: 'Thriving' };
+  return { key: 'ok', label: 'Steady' };
+}
+
+// ---------- Financial projections ----------
+function payrollQ() { return sum(S.employees, (e) => e.salary) / 4; }
+function opsStrain() {
+  const ops = S.employees.filter((e) => e.dept === 'ops');
+  const opsOut = sum(ops, (e) => TIER_INFO[e.tier].mult);
+  const nonOps = S.employees.length - ops.length;
+  const ratio = nonOps / (opsOut * 8 + 6);
+  return clamp(1 + 0.15 * (ratio - 1), 1, 1.5);
+}
+function overheadQ() {
+  const base = 18000 + 5000 * S.employees.length + sum(enteredMarkets(), (m) => m.overhead) + IND().compliance;
+  return base * DIF().overhead * opsStrain() * wageIndex();
+}
+function projectedNet() {
+  const rev = sum(enteredMarkets(), (m) => m.customers * marketARPU(m) * 3);
+  const gp = rev * IND().margin;
+  return gp - payrollQ() - overheadQ() - S.marketingSpend;
+}
+function runwayMonths() {
+  const net = projectedNet();
+  if (net >= 0) return Infinity;
+  return Math.max(0, S.cash) / (-net / 3);
+}
+
+// ---------- Valuation ----------
+function arrGrowthYoY() {
+  const h = S.history; const now = currentARR();
+  const prior = h.length >= 4 ? h[h.length - 4].arr : 0;
+  if (prior < 50000) return now > 0 ? 1 : 0;
+  return clamp(now / prior - 1, -0.5, 3);
+}
+function computeValuation() {
+  const ind = IND(); const arr = currentARR(); const rec = recessionNow();
+  const g = arrGrowthYoY();
+  const gf = clamp(0.6 + 0.5 * g, 0.4, 1.6);
+  const pf = Math.min(1.5, 1 + 0.025 * (S.product.level - 1));
+  const recF = rec ? 1 - 0.4 * rec.sev : 1;
+  const revVal = arr * ind.multiple * gf * pf * S.sentiment * recF;
+  const fallback = 1.5e6 + Math.max(0, S.cash) + S.product.level * 350000 + S.employees.length * 60000;
+  const fade = clamp(1 - arr / 3e6, 0, 1);
+  return Math.max(revVal, fallback * fade, Math.max(0, S.cash) * 0.8, 250000);
+}
+
+// ---------- Funding ----------
+function roundUnlockTurn(r) {
+  if (r.key === 'seed') return r.t5;
+  const t = Math.round(r.t5 * Math.pow(S.totalTurns / 20, 0.6));
+  return r.key === 'a' ? Math.min(t, 8) : t;
+}
+function roundARRNeed(r) { return r.arrAbs != null ? r.arrAbs : r.arrFrac * HOR().ipoARR * Math.min(IND().ipoMult, 1.3); }
+function roundStatus() {
+  const r = ROUNDS[S.funding.next];
+  if (!r) return { state: 'done' };
+  const unlock = roundUnlockTurn(r), need = roundARRNeed(r);
+  if (S.turn < unlock) return { state: 'locked', r, why: `Opens in Year ${yearOf(unlock)}, Q${quarterOf(unlock)}`, unlock, need };
+  if (currentARR() < need) return { state: 'locked', r, why: `Needs ${fmtMoney(need)} ARR`, unlock, need };
+  if (S.turn < S.funding.cooldownUntil) return { state: 'cooldown', r, why: `Investors will take meetings again in ${S.funding.cooldownUntil - S.turn} quarter${S.funding.cooldownUntil - S.turn > 1 ? 's' : ''}`, unlock, need };
+  return { state: 'open', r, unlock, need };
+}
+function fundingTerms(r) {
+  const scale = r.key === 'seed' || r.key === 'a' ? 1 : HOR().ipoARR / 100e6;
+  const preBasis = Math.max(r.floor * IND().floorMult * scale, computeValuation() * 1.1);
+  const mid = (r.eq[0] + r.eq[1]) / 2;
+  const fair = clamp(mid / S.sentiment, r.eq[0], r.eq[1]);
+  const baseCheck = preBasis * fair / (1 - fair);
+  return { preBasis, fair, baseCheck, min: r.eq[0] * 0.5, max: Math.min(0.4, r.eq[1] * 1.3) };
+}
+function fundingQuote(terms, eq) {
+  const cash = terms.baseCheck * Math.sqrt(eq / terms.fair);
+  const post = cash / eq;
+  return { eq, cash, post, pre: post - cash, ownerAfter: S.founderOwnership * (1 - eq) };
+}
+function closeRound(r, eq, cash) {
+  const investor = pick(INVESTORS[r.key]);
+  S.cash += cash;
+  S.founderOwnership *= 1 - eq;
+  S.capTable.forEach((h) => { h.pct *= 1 - eq; });
+  S.capTable.push({ name: `${investor} (${r.name})`, pct: eq });
+  S.funding.raised.push({ key: r.key, name: r.name, eq, cash, post: cash / eq, turn: S.turn, investor });
+  S.funding.next++;
+  S.funding.cooldownUntil = S.turn + HOR().roundGap;
+  S.stats.raised += cash;
+  S.sentiment = clamp(S.sentiment + 0.03, 0.6, 1.4);
+  news(`${S.company} closes a ${fmtMoney(cash)} ${r.name} led by ${investor}, at a ${fmtMoney(cash / eq)} post-money valuation.`, 'funding');
+}
+function walkAwayFromRound() {
+  S.funding.cooldownUntil = S.turn + 2;
+  S.sentiment = clamp(S.sentiment - 0.04, 0.6, 1.4);
+  S.stats.walkedAway++;
+}
+
+function ipoStatus() {
+  const need = ipoARRRequired();
+  const minTurn = Math.round(S.totalTurns * 0.3);
+  const checks = [
+    { ok: currentARR() >= need, text: `ARR of at least ${fmtMoney(need)}`, now: fmtMoney(currentARR()) },
+    { ok: S.turn >= minTurn, text: `At least ${Math.round(minTurn / 4)} years of operating history`, now: `${(S.turn / 4).toFixed(1)} years` },
+    { ok: S.funding.raised.length >= 2, text: 'Institutional backing (Series A or later)', now: `${S.funding.raised.length} rounds raised` },
+    { ok: arrGrowthYoY() > 0.1, text: 'Growing more than 10% a year', now: `${Math.round(arrGrowthYoY() * 100)}% YoY` },
+  ];
+  return { ok: checks.every((c) => c.ok), checks, need };
+}
+
+// ---------- Recessions ----------
+function scheduleRecessions() {
+  const list = HOR().recessions; const n = list.length; const seg = S.totalTurns / n;
+  S.recessions = list.map((r, i) => {
+    const start = Math.max(6, Math.round(seg * i + rr(0.3, 0.7) * seg));
+    const dur = Math.round(rr(3, 4 + 2 * r.sev));
+    return { start, end: Math.min(S.totalTurns, start + dur), sev: r.sev, announced: false, ended: false };
+  });
+}
+
+// ---------- New game ----------
+function newGame(opts) {
+  if (opts.seed != null) setSeed(opts.seed);
+  const h = HORIZONS[opts.horizon];
+  S = {
+    company: (opts.company || '').trim() || 'Untitled Co.', industry: opts.industry, difficulty: opts.difficulty, horizon: opts.horizon,
+    turn: 0, totalTurns: h.turns, cash: DIFFICULTY[opts.difficulty].cash, marketingSpend: 15000,
+    markets: CURATED_MARKETS.map((d, i) => makeMarket(d, i)),
+    employees: [], former: [], nextId: 1, recentFirst: [], recentLast: [], usedNames: [],
+    product: { level: 1, points: 0, shipped: [] },
+    sentiment: 1, valuation: 0, founderOwnership: 1, capTable: [],
+    funding: { next: 0, raised: [], cooldownUntil: 0, announced: {} },
+    rival: { name: '', strength: 0, alumni: [], pending: [] },
+    recessions: [], history: [], log: [], events: [], modalQueue: [], newsQueue: [],
+    qOneTime: 0, qOneTimeItems: [], last: null, scoutCount: 0, clapsUsed: 0, bridgeUsed: false,
+    acqCooldownUntil: 4, gameOver: null, offersDeclined: [],
+    stats: { hires: 0, fires: 0, resigned: 0, retained: 0, lostNegotiations: 0, transfers: 0, reassigns: 0, bonuses: 0, claps: 0,
+      marketsEntered: 0, raised: 0, ships: 0, toRival: 0, walkedAway: 0, peakARR: 0, peakValuation: 0, calcified: 0 },
+  };
+  S.rival.name = `${pick(RIVAL_A)} ${pick(RIVAL_B)}`;
+  scheduleRecessions();
+  // Founding team: two engineers and one sales rep.
+  ['eng', 'eng', 'sales'].forEach((d) => S.employees.push(makeEmployee(d)));
+  S.valuation = computeValuation();
+  S.history.push(snapshot());
+  news(`${S.company} is open for business. Three people, ${fmtMoney(S.cash)} in the bank, and an MVP. ${S.rival.name} is already in the space.`, 'info');
+  return S;
+}
+function snapshot() {
+  return { turn: S.turn, arr: currentARR(), cash: S.cash, customers: totalCustomers(), valuation: S.valuation, revenue: totalRevenue(), net: S.last ? S.last.net : 0, head: S.employees.length };
+}
+
+// ---------- The quarter ----------
+function advanceQuarter() {
+  if (!S || S.gameOver || S.modalQueue.length) return false;
+  const ind = IND(), dif = DIF();
+  const rec = recessionNow(); const sev = rec ? rec.sev : 0;
+  const level = S.product.level;
+
+  // 1. Effective output of every person this quarter
+  const outs = new Map(S.employees.map((e) => [e.id, empOutput(e)]));
+  const deptOut = (d) => sum(S.employees.filter((e) => e.dept === d), (e) => outs.get(e.id));
+  const engOut = deptOut('eng'), mktOut = deptOut('mkt'), opsOut = deptOut('ops');
+
+  // 2. Customer acquisition (marketing + sales), 3. churn, 4. revenue, per market
+  const entered = enteredMarkets();
+  const weights = entered.map((m) => m.size * m.growth);
+  const wsum = sum(weights);
+  const mktTeam = Math.min(1.8, 1 + 0.12 * Math.pow(mktOut, 0.6));
+  const baseCAC = ind.cac * dif.cac * Math.pow(productArpuMult(level), 0.8) * (1 + 0.45 * sev) * (1 + S.rival.strength) / mktTeam;
+  const stageCap = 1 + 0.05 * (level - 1);
+  const custStart = totalCustomers();
+  const coverage = (opsOut * ind.supportCap + ind.supportCap * 0.6) / Math.max(1, custStart);
+  const supportF = 1.2 - 0.35 * Math.min(1, coverage);
+  const churnM = ind.churn * dif.churn * productChurnMult(level) * supportF * (1 + 0.3 * sev);
+  let newMkt = 0, newSales = 0, churnedAll = 0;
+  entered.forEach((m, i) => {
+    const spendM = wsum > 0 ? S.marketingSpend * weights[i] / wsum : 0;
+    const cap = 250000 * m.size * m.growth * stageCap;
+    const eff = 1 / (1 + spendM / cap);
+    const headroom = Math.max(0, 1 - penetration(m));
+    const nm = spendM * eff * m.growth * marketRamp(m) * headroom / (baseCAC * Math.pow(m.arpu, 0.3));
+    const reps = S.employees.filter((e) => e.dept === 'sales' && e.market === m.id);
+    const sat = 1 / (1 + 0.05 * Math.max(0, reps.length - 1) / m.size);
+    let ns = 0;
+    reps.forEach((e) => { ns += headroom * ind.salesDeals * (1 - 0.3 * sev) * outs.get(e.id) * Math.sqrt(m.growth) * marketRamp(m) * sat; });
+    const rate = 1 - Math.pow(1 - churnM * marketChurnMult(m), 3);
+    const churned = m.customers * rate + (nm + ns) * rate * 0.5;
+    m.customers = Math.max(0, m.customers + nm + ns - churned);
+    m.revenue = m.customers * marketARPU(m) * 3;
+    m.newCust = nm + ns; m.churned = churned; m.lastSpend = spendM;
+    m.cac = nm > 0 ? spendM / nm : 0;
+    m.hist.push(m.revenue); if (m.hist.length > 16) m.hist.shift();
+    m.profitHist.push(m.revenue * ind.margin - m.overhead * dif.overhead - spendM - sum(reps, (e) => e.salary / 4));
+    if (m.profitHist.length > 8) m.profitHist.shift();
+    newMkt += nm; newSales += ns; churnedAll += churned;
+  });
+
+  // 5. P&L
+  const revenue = totalRevenue();
+  const cogs = revenue * (1 - ind.margin);
+  const gp = revenue - cogs;
+  const payroll = payrollQ();
+  const overhead = overheadQ();
+  const marketing = S.marketingSpend;
+  const net = gp - payroll - overhead - marketing;
+  S.cash += net;
+  S.last = { revenue, cogs, gp, payroll, overhead, marketing, net, oneTime: S.qOneTime, oneTimeItems: S.qOneTimeItems.slice(),
+    newMkt, newSales, churned: churnedAll, churnRate: churnM, supportF, coverage, cac: newMkt > 0 ? marketing / newMkt : 0,
+    engOut, mktOut, opsOut, strain: opsStrain() };
+  S.qOneTime = 0; S.qOneTimeItems = [];
+
+  // 6. Product progress
+  S.product.points += engOut + 0.3;
+
+  // 7. Sentiment & valuation
+  S.sentiment = clamp(S.sentiment + rr(-0.07, 0.07) + (1 - S.sentiment) * 0.15 - sev * 0.04, 0.6, 1.4);
+  S.valuation = computeValuation();
+  S.stats.peakARR = Math.max(S.stats.peakARR, currentARR());
+  S.stats.peakValuation = Math.max(S.stats.peakValuation, S.valuation);
+
+  // 8. People
+  // Unanswered transfer requests lapse; overlooked cards stay while the rough patch lasts.
+  S.events = S.events.filter((ev) => { const e = empById(ev.empId); return ev.type === 'overlooked' && e && e.temp && e.temp.reason === 'feeling overlooked'; });
+  S.employees.forEach((e) => { if (e.request) { e.request = null; e.grievance = Math.min(20, e.grievance + 4); addHistory(e, 'Transfer request went unanswered'); } });
+  employeesQuarter();
+
+  // 9. The world
+  S.turn++;
+  S.clapsUsed = 0;
+  worldQuarter();
+  S.history.push(snapshot());
+
+  // 10. End conditions
+  if (S.cash < 0) {
+    if (S.turn >= S.totalTurns || S.bridgeUsed) { endGame('bankrupt'); return true; }
+    S.modalQueue.unshift({ type: 'bridge' });
+  } else if (S.turn >= S.totalTurns) { endGame('time'); return true; }
+  return true;
+}
+
+function employeesQuarter() {
+  const leaving = [];
+  S.employees.forEach((e) => {
+    if (e.dip > 0) e.dip--;
+    e.grievance = Math.max(0, e.grievance - 1);
+    // Reveal the baseline after their first quarter (or first quarter after a move)
+    if (!e.revealed) {
+      e.revealed = true;
+      const t = TIER_INFO[e.tier].label;
+      if (e.prevTier) {
+        const better = tierIdx(e.tier) < tierIdx(e.prevTier), worse = tierIdx(e.tier) > tierIdx(e.prevTier);
+        addHistory(e, `Settled into ${DEPTS[e.dept].short} as ${t}`);
+        news(`${e.name} has settled into ${DEPTS[e.dept].name}: ${better ? 'the move unlocked something. Now ' + t + '.' : worse ? 'it hasn’t clicked. Now ' + t + '.' : 'same as before, ' + t + '.'}`, better ? 'good' : worse ? 'bad' : 'team');
+        e.prevTier = null;
+      } else {
+        addHistory(e, `First quarter in: ${t}`);
+        if (e.tier === 'star' || e.tier === 'under') news(`${e.name}'s first quarter is in. ${e.tier === 'star' ? 'A genuine Star. Keep them happy.' : 'An Underperformer, so far. Coaching or a move might help.'}`, e.tier === 'star' ? 'good' : 'bad');
+      }
+      return;
+    }
+    // Temporary states run their course; rarely they calcify into a real shift.
+    if (e.temp) {
+      e.temp.left--;
+      if (e.temp.left <= 0) {
+        const t = e.temp; e.temp = null;
+        if (t.type === 'rough' && chance(CALCIFY_CHANCE) && e.tier !== 'under') {
+          e.tier = TIERS[tierIdx(e.tier) + 1]; S.stats.calcified++;
+          addHistory(e, `Rough patch stuck: now ${TIER_INFO[e.tier].label}`);
+          news(`${e.name}'s rough patch didn't lift. It looks like a lasting change: now ${TIER_INFO[e.tier].label}.`, 'bad');
+        } else if (t.type === 'hot' && chance(CALCIFY_CHANCE) && e.tier !== 'star') {
+          e.tier = TIERS[tierIdx(e.tier) - 1]; S.stats.calcified++;
+          addHistory(e, `Hot streak stuck: now ${TIER_INFO[e.tier].label}`);
+          news(`${e.name}'s hot streak turned out to be real growth: now ${TIER_INFO[e.tier].label}.`, 'good');
+        } else if (t.type !== 'motivated') addHistory(e, t.type === 'rough' ? 'Out of the rough patch' : 'Hot streak cooled off');
+      }
+    } else {
+      const r = rand();
+      const since = quartersSinceRecog(e);
+      if (r < TEMP_ODDS.rough) {
+        e.temp = { type: 'rough', left: ri(1, 3), reason: pick(['a hard stretch at home', 'burnout', 'a project that went sideways', 'a clash with a teammate']) };
+        addHistory(e, `Rough patch (${e.temp.reason})`);
+        news(`${e.name} has hit a rough patch: ${e.temp.reason}.`, 'bad');
+      } else if (r < TEMP_ODDS.rough + TEMP_ODDS.hot) {
+        e.temp = { type: 'hot', left: ri(1, 3), reason: pick(['in the zone', 'a breakthrough idea', 'a great new mentor']) };
+        addHistory(e, `Hot streak (${e.temp.reason})`);
+        news(`${e.name} is on a hot streak: ${e.temp.reason}.`, 'good');
+      } else if (since >= 5 && chance(Math.min(0.25, 0.04 * (since - 4)))) {
+        e.temp = { type: 'rough', left: ri(2, 3), reason: 'feeling overlooked' };
+        addHistory(e, 'Rough patch: feeling overlooked');
+        S.events.push({ type: 'overlooked', empId: e.id, turn: S.turn });
+      }
+    }
+    // Resignations
+    if (tenure(e) >= 2) {
+      const risk = flightRisk(e);
+      const p = Math.max(0, risk - 20) / 100 * 0.35;
+      if (chance(p)) leaving.push(e);
+    }
+    // Transfer requests (biased toward the skill's department)
+    if (!e.request && tenure(e) >= 3 && S.turn - e.deptSince >= 3 && chance(0.03)) {
+      const skillDept = SKILLS[e.skill].dept;
+      const to = skillDept !== e.dept && chance(0.65) ? skillDept : pick(DEPT_KEYS.filter((d) => d !== e.dept));
+      e.request = to;
+      S.events.push({ type: 'transfer', empId: e.id, to, turn: S.turn });
+      addHistory(e, `Asked to move to ${DEPTS[to].short}`);
+    }
+  });
+  let talks = 0;
+  leaving.sort((a, b) => tierIdx(a.tier) - tierIdx(b.tier)).forEach((e) => {
+    if (e.tier === 'star' || e.tier === 'strong') {
+      if (talks++ >= 2) { e.grievance = Math.min(20, e.grievance + 2); return; }
+      const dest = chance(0.45) ? S.rival.name : pick(OTHER_EMPLOYERS);
+      S.modalQueue.push({ type: 'retain', empId: e.id, dest });
+    } else {
+      S.stats.resigned++;
+      news(`${e.name} (${TIER_INFO[e.tier].label}, ${DEPTS[e.dept].name}) has resigned. ${quartersSinceRecog(e) >= 5 ? 'They said nobody noticed their work.' : 'They wanted a change of scene.'}`, 'depart');
+      removeEmployee(e, 'resigned');
+    }
+  });
+}
+
+function retainOptions(e) {
+  const since = quartersSinceRecog(e);
+  const adj = (e.tier === 'star' ? -0.08 : 0) + (since > 8 ? -0.08 : 0) + (tenure(e) > 12 ? 0.05 : 0) - e.grievance / 200;
+  const mk = (key, label, raise, oneTime, base) => ({ key, label, raise, oneTime, cost: Math.round(e.salary * raise / 1000) * 1000, oneTimeCost: Math.round(e.salary * oneTime / 1000) * 1000, p: clamp(base + adj, 0.05, 0.97) });
+  return [mk('low', 'Lowball', 0.07, 0, 0.38), mk('fair', 'Fair', 0.15, 0, 0.66), mk('gen', 'Generous', 0.25, 0.1, 0.88)];
+}
+const RETAIN_YES = ['felt genuinely valued by the raise', 'realized they were not done building here', 'said the counter showed we were serious', 'talked it over at home and decided to stay'];
+const RETAIN_NO = ['the new role was too exciting to pass up', 'said the offer came too late', 'felt the counter didn’t match what they bring', 'had already made up their mind'];
+function resolveRetain(e, opt, dest) {
+  if (opt) spend(opt.oneTimeCost, `Retention bonus for ${e.name}`);
+  if (opt && chance(opt.p)) {
+    e.salary += opt.cost; e.lastRaiseTurn = S.turn; e.lastRecog = S.turn; e.grievance = 0;
+    if (opt.key === 'gen') e.temp = { type: 'motivated', left: 2, reason: 'retention' };
+    S.stats.retained++;
+    addHistory(e, `Stayed after a ${opt.label.toLowerCase()} counter (+${fmtMoney(opt.cost)}/yr)`);
+    const msg = `${e.name} is staying. They ${pick(RETAIN_YES)}.`;
+    news(msg, 'good');
+    return { ok: true, msg };
+  }
+  S.stats.resigned++;
+  if (opt) S.stats.lostNegotiations++;
+  const msg = opt ? `${e.name} is leaving for ${dest}. ${pick(RETAIN_NO).replace(/^./, (c) => c.toUpperCase())}.` : `${e.name} is leaving for ${dest}. You didn't counter.`;
+  news(msg, 'depart');
+  removeEmployee(e, 'resigned');
+  return { ok: false, msg };
+}
+
+function worldQuarter() {
+  // Recessions start and end
+  S.recessions.forEach((r) => {
+    if (!r.announced && S.turn >= r.start) { r.announced = true; news(r.sev >= 0.8 ? 'A full-blown recession. Budgets are frozen, buyers are cautious, and investors want profits.' : 'The economy is wobbling. Deals take longer and customers are watching spend.', 'recession'); }
+    if (r.announced && !r.ended && S.turn >= r.end) { r.ended = true; news('The downturn is over. Buyers are back and investors are taking meetings again.', 'good'); }
+  });
+  // Rival alumni news
+  S.rival.pending = S.rival.pending.filter((p) => {
+    if (p.turn > S.turn) return true;
+    if (chance(0.7)) news(pick([`${p.name} is reportedly running ${DEPTS[p.dept].name} at ${S.rival.name} now. Their last launch got good press.`, `${S.rival.name} landed a big partnership this quarter. Insiders credit ${p.name}.`, `Industry chatter says ${p.name} has made ${S.rival.name} noticeably sharper.`]), 'rival');
+    else { S.rival.strength = Math.max(0, S.rival.strength - 0.01); news(`Word is ${p.name} is already restless at ${S.rival.name}. The grass wasn't greener.`, 'rival'); }
+    return false;
+  });
+  // Funding round opens
+  const fs = roundStatus();
+  if (fs.state === 'open' && !S.funding.announced[fs.r.key]) { S.funding.announced[fs.r.key] = true; news(`Investors are circling. A ${fs.r.name} round is now open to you on the Funding tab.`, 'funding'); }
+  // Acquisition offers
+  if (S.turn >= S.acqCooldownUntil && S.turn < S.totalTurns && currentARR() > 0) {
+    const p = HOR().acqRate * (currentARR() > 500000 ? 1 : 0.3);
+    if (chance(p)) {
+      const rec = recessionNow();
+      const offer = S.valuation * rr(0.85, 1.55) * HOR().acqPremium * (rec ? 0.8 : 1);
+      S.modalQueue.push({ type: 'acquisition', buyer: pick(ACQUIRERS), offer });
+      S.acqCooldownUntil = S.turn + 4;
+    }
+  }
+}
+
+function acquisitionVerdict(offer) {
+  const h = S.history; const n = Math.min(4, h.length - 1);
+  let qg = 0;
+  if (n > 0 && h[h.length - 1 - n].arr > 0) qg = Math.pow(h[h.length - 1].arr / h[h.length - 1 - n].arr, 1 / n) - 1;
+  qg = clamp(qg, -0.1, 0.25);
+  const horizon = Math.min(12, S.totalTurns - S.turn);
+  const projected = S.valuation * Math.pow(1 + qg, horizon) * 0.75;
+  let key, text;
+  if (offer >= projected) { key = 'great'; text = `Sold at the right time. At your recent growth rate (${(qg * 100).toFixed(1)}% a quarter), the company would likely have been worth about ${fmtMoney(projected)} after risk in ${horizon} quarters. The offer beat that.`; }
+  else if (offer >= projected * 0.7) { key = 'ok'; text = `A defensible exit. Staying the course pointed to roughly ${fmtMoney(projected)} after risk, so you left some upside on the table, but you also skipped the risk of getting there.`; }
+  else { key = 'early'; text = `Probably early. Growth of ${(qg * 100).toFixed(1)}% a quarter pointed to roughly ${fmtMoney(projected)} within ${horizon} quarters, well above the offer.`; }
+  return { key, text, projected, qg };
+}
+
+function endGame(kind, extra = {}) {
+  S.gameOver = { kind, turn: S.turn, ...extra };
+  S.modalQueue = [];
+}
+
+function shipProduct() {
+  const cost = shipCost(), cash = shipCash();
+  if (S.product.points < cost) return false;
+  S.product.points -= cost;
+  spend(cash, `Launching v${S.product.level + 1}`);
+  const before = stageFor(S.product.level).cur.name;
+  S.product.level++;
+  const code = CODENAMES[(S.product.level - 2) % CODENAMES.length];
+  S.product.shipped.push({ level: S.product.level, turn: S.turn, code });
+  S.stats.ships++;
+  const after = stageFor(S.product.level).cur.name;
+  news(`v${S.product.level} "${code}" ships. Prices can rise a little and customers have fewer reasons to leave.${after !== before ? ` The product is now ${after}.` : ''}`, 'product');
+  return true;
+}
+
+/* =====================================================================
+   Mascots: small inline SVG characters, one advisor + one newsroom per industry
+   ===================================================================== */
+const SHADOW = '<ellipse cx="32" cy="60" rx="15" ry="2.6" fill="#000" opacity=".13"/>';
+const MASCOTS = {
+  penguin: `${SHADOW}
+    <ellipse cx="20" cy="40" rx="4" ry="10" fill="#26313a" transform="rotate(18 20 40)"/>
+    <ellipse cx="44" cy="40" rx="4" ry="10" fill="#26313a" transform="rotate(-18 44 40)"/>
+    <ellipse cx="32" cy="37" rx="15" ry="20" fill="#2e3a44"/>
+    <ellipse cx="32" cy="41" rx="10" ry="14" fill="#f3f1ec"/>
+    <path d="M20 24h24v3a4 4 0 0 1-4 4h-4a3 3 0 0 1-3-3 3 3 0 0 1-3 3h-4a4 4 0 0 1-4-4z" fill="#15191d"/>
+    <rect x="21" y="25" width="7" height="1.4" rx=".7" fill="#7f97a3" opacity=".8"/>
+    <path d="M29 32h6l-3 4z" fill="#d39b4e"/>
+    <ellipse cx="26" cy="58" rx="5" ry="2" fill="#d39b4e"/><ellipse cx="38" cy="58" rx="5" ry="2" fill="#d39b4e"/>`,
+  fox: `${SHADOW}
+    <path d="M44 50c10 0 14-8 12-14-3 6-8 7-12 7z" fill="#c07a46"/><path d="M53 38c2 2 3 4 3 6-2-1-3-3-3-6z" fill="#f2ede4"/>
+    <ellipse cx="32" cy="46" rx="12" ry="12" fill="#c07a46"/>
+    <ellipse cx="32" cy="49" rx="6" ry="8" fill="#f2ede4"/>
+    <path d="M18 14l6 12h-8zM46 14l2 12h-8z" fill="#b36d3b"/><path d="M19 17l3 7h-4zM45 17l1 7h-4z" fill="#3a2b25"/>
+    <path d="M16 26c0-6 7-10 16-10s16 4 16 10c0 5-7 12-16 12S16 31 16 26z" fill="#c9834d"/>
+    <path d="M22 30c3 5 7 8 10 8s7-3 10-8c-4 2-7 2-10 2s-6 0-10-2z" fill="#f2ede4"/>
+    <ellipse cx="25" cy="25" rx="2" ry="2.4" fill="#22201e"/><ellipse cx="39" cy="25" rx="2" ry="2.4" fill="#22201e"/>
+    <circle cx="25.7" cy="24.2" r=".7" fill="#fff"/><circle cx="39.7" cy="24.2" r=".7" fill="#fff"/>
+    <ellipse cx="32" cy="34" rx="2.2" ry="1.6" fill="#22201e"/>`,
+  rabbit: `${SHADOW}
+    <path d="M7 34h8M5 40h9M8 46h7" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>
+    <ellipse cx="25" cy="12" rx="4.5" ry="12" fill="#ddd6cf" transform="rotate(-10 25 12)"/>
+    <ellipse cx="39" cy="12" rx="4.5" ry="12" fill="#ddd6cf" transform="rotate(10 39 12)"/>
+    <ellipse cx="25" cy="13" rx="2" ry="8" fill="#d9a9a6" transform="rotate(-10 25 13)"/>
+    <ellipse cx="39" cy="13" rx="2" ry="8" fill="#d9a9a6" transform="rotate(10 39 13)"/>
+    <ellipse cx="32" cy="46" rx="13" ry="12" fill="#e7e1da"/>
+    <circle cx="32" cy="29" r="11" fill="#ece6df"/>
+    <circle cx="28" cy="28" r="1.8" fill="#2a2524"/><circle cx="36" cy="28" r="1.8" fill="#2a2524"/>
+    <path d="M30.5 32h3l-1.5 1.6z" fill="#c98f8c"/><path d="M32 33.6v1.6M30 35.5c1 .8 3 .8 4 0" stroke="#7d6a66" stroke-width=".9" fill="none" stroke-linecap="round"/>
+    <circle cx="25" cy="32" r="2" fill="#e3b8b4" opacity=".6"/><circle cx="39" cy="32" r="2" fill="#e3b8b4" opacity=".6"/>
+    <ellipse cx="24" cy="57" rx="6" ry="2.6" fill="#ddd6cf"/><ellipse cx="40" cy="57" rx="6" ry="2.6" fill="#ddd6cf"/>`,
+  bee: `${SHADOW}
+    <ellipse cx="22" cy="24" rx="9" ry="6" fill="#dfe7ea" opacity=".85" transform="rotate(-25 22 24)"/>
+    <ellipse cx="42" cy="24" rx="9" ry="6" fill="#dfe7ea" opacity=".85" transform="rotate(25 42 24)"/>
+    <path d="M27 17c-2-5-5-7-7-7M37 17c2-5 5-7 7-7" stroke="#3a3530" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <circle cx="20" cy="10" r="1.8" fill="#3a3530"/><circle cx="44" cy="10" r="1.8" fill="#3a3530"/>
+    <ellipse cx="32" cy="40" rx="15" ry="17" fill="#d9a948"/>
+    <path d="M18 36h28M17.5 44h29M20.5 52h23" stroke="#3a3530" stroke-width="4.2"/>
+    <circle cx="32" cy="24" r="9" fill="#e0b553"/>
+    <circle cx="28.5" cy="23" r="1.8" fill="#2a2524"/><circle cx="35.5" cy="23" r="1.8" fill="#2a2524"/>
+    <path d="M29 27.5c2 1.5 4 1.5 6 0" stroke="#2a2524" stroke-width="1.1" fill="none" stroke-linecap="round"/>`,
+  robot: `${SHADOW}
+    <path d="M32 6v6" stroke="#5d6670" stroke-width="2"/><circle cx="32" cy="5" r="2.5" fill="var(--second)"/>
+    <rect x="17" y="12" width="30" height="20" rx="5" fill="#8b949c"/>
+    <rect x="21" y="16" width="22" height="11" rx="3" fill="#2a3036"/>
+    <rect x="24" y="19" width="5" height="4" rx="1" fill="#9fc3c9"/><rect x="35" y="19" width="5" height="4" rx="1" fill="#9fc3c9"/>
+    <rect x="29" y="32" width="6" height="3" fill="#6e7780"/>
+    <rect x="18" y="35" width="28" height="19" rx="4" fill="#9aa2a9"/>
+    <rect x="24" y="40" width="16" height="7" rx="2" fill="#7c858d"/><circle cx="28" cy="43.5" r="1.4" fill="var(--second)"/><circle cx="32" cy="43.5" r="1.4" fill="#9fc3c9"/><circle cx="36" cy="43.5" r="1.4" fill="#c6c9b9"/>
+    <rect x="10" y="37" width="7" height="4" rx="2" fill="#7c858d"/><rect x="47" y="37" width="7" height="4" rx="2" fill="#7c858d"/>
+    <rect x="22" y="54" width="7" height="5" rx="1.5" fill="#5d6670"/><rect x="35" y="54" width="7" height="5" rx="1.5" fill="#5d6670"/>`,
+  owl: `${SHADOW}
+    <path d="M18 18l4 6h-6zM46 18l-4 6h6z" fill="#6f5a48"/>
+    <ellipse cx="32" cy="40" rx="17" ry="19" fill="#7d6754"/>
+    <ellipse cx="32" cy="45" rx="10" ry="12" fill="#c9b49a"/>
+    <path d="M26 42q2 2 4 0M34 42q2 2 4 0M28 48q2 2 4 0M32 48q2 2 4 0" stroke="#9d876d" stroke-width="1" fill="none"/>
+    <circle cx="25" cy="30" r="7" fill="#efe8dc"/><circle cx="39" cy="30" r="7" fill="#efe8dc"/>
+    <circle cx="25" cy="30" r="3.2" fill="#2a2420"/><circle cx="39" cy="30" r="3.2" fill="#2a2420"/>
+    <circle cx="26" cy="29" r="1" fill="#fff"/><circle cx="40" cy="29" r="1" fill="#fff"/>
+    <circle cx="25" cy="30" r="7.6" fill="none" stroke="#3b332d" stroke-width="1.2"/><circle cx="39" cy="30" r="7.6" fill="none" stroke="#3b332d" stroke-width="1.2"/><path d="M32.6 30h-1.2" stroke="#3b332d" stroke-width="1.2"/>
+    <path d="M30 35h4l-2 4z" fill="#d1a053"/>
+    <path d="M24 59v-3M28 59v-3M36 59v-3M40 59v-3" stroke="#d1a053" stroke-width="2" stroke-linecap="round"/>`,
+  eagle: `${SHADOW}
+    <path d="M14 34c-4 8-3 16 3 20l5-14zM50 34c4 8 3 16-3 20l-5-14z" fill="#5e4636"/>
+    <ellipse cx="32" cy="43" rx="15" ry="16" fill="#6b4f3c"/>
+    <path d="M17 26c0-9 7-14 15-14s15 5 15 14c0 6-6 11-15 11S17 32 17 26z" fill="#f1ede6"/>
+    <path d="M25 22l5 2M39 22l-5 2" stroke="#3a312b" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="27" cy="26" r="1.9" fill="#2a2420"/><circle cx="37" cy="26" r="1.9" fill="#2a2420"/>
+    <path d="M28 30h8c0 4-2 7-5 8 1-2 1-4-3-5z" fill="#d6a443"/>
+    <path d="M26 59v-3M30 59v-3M34 59v-3M38 59v-3" stroke="#d6a443" stroke-width="2" stroke-linecap="round"/>`,
+  parrot: `${SHADOW}
+    <path d="M27 56l-4 6M32 57v6M37 56l4 6" stroke="#4f7d8f" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="32" cy="42" rx="12" ry="15" fill="#5f9474"/>
+    <path d="M22 38c-6 6-6 14 0 18l4-10z" fill="#4c7a5f"/>
+    <path d="M27 10c2-4 6-5 8-3-3 0-4 2-5 4M31 9c3-3 8-2 9 1-3-1-5 0-7 2" fill="#b8564f"/>
+    <circle cx="32" cy="24" r="11" fill="#6aa080"/>
+    <circle cx="35" cy="22" r="3.4" fill="#f0ece4"/><circle cx="35.6" cy="22" r="1.7" fill="#2a2420"/>
+    <path d="M39 25c6 0 8 5 5 9-1-3-3-4-6-4z" fill="#e1c27a"/><path d="M39 30c2 0 3 1 3 3-1-1-2-1-3-1z" fill="#3a332c"/>
+    <circle cx="29" cy="28" r="2.2" fill="#c9786f" opacity=".6"/>`,
+  squirrel: `${SHADOW}
+    <path d="M42 56c14 0 18-14 12-26-4-8-14-8-16-2 6-2 10 2 10 8 0 6-6 10-10 10z" fill="#a8744a"/>
+    <path d="M47 38c3 0 5 4 4 8" stroke="#c99570" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="30" cy="45" rx="11" ry="13" fill="#b07c52"/>
+    <ellipse cx="29" cy="48" rx="6" ry="8" fill="#ead9c3"/>
+    <path d="M21 14l3 8h-6zM35 13l1 9h-6z" fill="#9a6943"/>
+    <circle cx="28" cy="27" r="10" fill="#b8845a"/>
+    <circle cx="24.5" cy="25.5" r="1.9" fill="#2a2420"/><circle cx="32.5" cy="25.5" r="1.9" fill="#2a2420"/>
+    <ellipse cx="28.5" cy="30" rx="1.8" ry="1.3" fill="#3a2b25"/>
+    <ellipse cx="29" cy="40" rx="4.2" ry="3.4" fill="#8a5b3a"/><path d="M26 38.5h6" stroke="#6a4630" stroke-width="1.2"/>`,
+  dish: `${SHADOW}
+    <path d="M40 10a10 10 0 0 1 10 10M40 4a16 16 0 0 1 16 16" stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" opacity=".75"/>
+    <path d="M28 40l-8 18h24l-8-18z" fill="#7c858d"/>
+    <rect x="18" y="56" width="28" height="4" rx="1.5" fill="#5d6670"/>
+    <path d="M12 30c4-14 20-22 32-14L20 40C14 38 11 35 12 30z" fill="#c9cfd3"/>
+    <path d="M16 31c4-10 15-15 24-12" stroke="#a7b0b6" stroke-width="1.3" fill="none"/>
+    <path d="M26 27l11-6" stroke="#5d6670" stroke-width="1.6"/><circle cx="38" cy="20.5" r="2.4" fill="var(--second)"/>
+    <circle cx="28" cy="40" r="3" fill="#5d6670"/>
+    <circle cx="23" cy="30" r="1.6" fill="#2a3036"/><circle cx="29" cy="27" r="1.6" fill="#2a3036"/><path d="M24 34c2 1 4 0 5-2" stroke="#2a3036" stroke-width="1.1" fill="none" stroke-linecap="round"/>`,
+};
+function mascotSVG(kind, size = 64) {
+  return `<svg class="mascot-svg" viewBox="0 0 64 64" width="${size}" height="${size}" aria-hidden="true">${MASCOTS[kind] || ''}</svg>`;
+}
+
+/* =====================================================================
+   UI: rendering and interaction
+   ===================================================================== */
+const $ = (s) => document.querySelector(s);
+const UI = {
+  screen: 'setup', tab: 'overview',
+  setup: { name: '', industry: 'saas', difficulty: 'standard', horizon: 10 },
+  sort: { key: 'dept', dir: 1 }, teamFilter: 'all', hireMarket: null,
+  pendingTransfer: {}, pendingMarket: {}, confirmFire: null,
+  tipsOpen: false, newsOpen: false, newsIdx: 0,
+};
+
+// ---------- Formatting ----------
+function fmtMoney(n, opts = {}) {
+  if (n == null || !isFinite(n)) return '—';
+  const neg = n < 0, a = Math.abs(n); let s;
+  if (a >= 1e9) s = (a / 1e9).toFixed(a >= 1e11 ? 0 : a >= 1e10 ? 1 : 2) + 'B';
+  else if (a >= 1e6) s = (a / 1e6).toFixed(a >= 1e8 ? 0 : a >= 1e7 ? 1 : 2) + 'M';
+  else if (a >= 1e4) s = Math.round(a / 1e3) + 'k';
+  else if (a >= 1e3) s = (a / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
+  else s = String(Math.round(a));
+  return (neg ? '−' : opts.sign ? '+' : '') + '$' + s;
+}
+function fmtNum(n) {
+  if (!isFinite(n)) return '—';
+  const a = Math.abs(n);
+  if (a >= 1e6) return (n / 1e6).toFixed(a >= 1e7 ? 1 : 2) + 'M';
+  if (a >= 1e4) return (n / 1e3).toFixed(1) + 'k';
+  return Math.round(n).toLocaleString('en-US');
+}
+const fmtPct = (x, d = 1) => (x * 100).toFixed(d).replace(/\.0+$/, '') + '%';
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtTenure = (q) => (q < 4 ? `${q}q` : `${Math.floor(q / 4)}y${q % 4 ? ' ' + (q % 4) + 'q' : ''}`);
+const fmtRunway = (m) => (m === Infinity ? 'Profitable' : m >= 120 ? '10+ yrs' : m >= 24 ? (m / 12).toFixed(1) + ' yrs' : m.toFixed(1) + ' mo');
+const clockLabel = (turn) => `Year ${yearOf(turn)} · Q${quarterOf(turn)}`;
+
+// ---------- Theme ----------
+function applyIndustryTheme(key) { document.documentElement.setAttribute('data-industry', key); }
+
+// ---------- Toast ----------
+let toastTimer = null;
+function toast(text, kind = '') {
+  const root = $('#toast-root');
+  root.innerHTML = `<div class="toast ${kind}" role="status">${esc(text)}</div>`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { root.innerHTML = ''; }, 4200);
+}
+
+// ---------- Charts ----------
+function lineChart(series, { w = 560, h = 170, fmt = fmtMoney } = {}) {
+  const n = Math.max(...series.map((s) => s.values.length));
+  if (n < 2) return `<div class="chart-empty">This chart fills in after your first quarter.</div>`;
+  const pad = { l: 54, r: 14, t: 12, b: 24 };
+  const all = series.flatMap((s) => s.values);
+  let lo = Math.min(0, ...all), hi = Math.max(...all);
+  if (hi - lo < 1) hi = lo + 1;
+  const X = (i) => pad.l + (w - pad.l - pad.r) * (i / (n - 1));
+  const Y = (v) => pad.t + (h - pad.t - pad.b) * (1 - (v - lo) / (hi - lo));
+  let g = '';
+  const ticks = lo < 0 ? [lo, 0, hi] : [0, hi / 2, hi];
+  ticks.forEach((t) => { g += `<line x1="${pad.l}" x2="${w - pad.r}" y1="${Y(t)}" y2="${Y(t)}" class="grid${t === 0 ? ' zero' : ''}"/><text x="${pad.l - 8}" y="${Y(t) + 4}" text-anchor="end" class="tick">${fmt(t)}</text>`; });
+  const years = Math.ceil(n / 4); const step = Math.max(1, Math.ceil(years / 8)) * 4;
+  for (let i = 0; i < n; i += step) g += `<text x="${X(i)}" y="${h - 6}" text-anchor="middle" class="tick">Y${yearOf(i)}</text>`;
+  S.recessions.forEach((r) => {
+    if (!r.announced) return;
+    const a = Math.min(r.start, n - 1), b = Math.min(r.end, n - 1);
+    if (b > a) g += `<rect x="${X(a)}" y="${pad.t}" width="${X(b) - X(a)}" height="${h - pad.t - pad.b}" class="rec-band"/>`;
+  });
+  series.forEach((s, si) => {
+    const pts = s.values.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`);
+    if (si === 0) g += `<path d="M${X(0)},${Y(Math.max(lo, 0))} L${pts.join(' L')} L${X(s.values.length - 1)},${Y(Math.max(lo, 0))} Z" class="area" style="fill:${s.color}"/>`;
+    g += `<path d="M${pts.join(' L')}" class="line" style="stroke:${s.color}"/>`;
+    const li = s.values.length - 1;
+    g += `<circle cx="${X(li)}" cy="${Y(s.values[li])}" r="3.5" style="fill:${s.color}" class="dot"/>`;
+  });
+  return `<svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(series.map((s) => s.label).join(' and '))} over time">${g}</svg>`;
+}
+function sparkline(values, w = 90, h = 22) {
+  if (values.length < 2) return `<span class="spark-empty">—</span>`;
+  const lo = Math.min(...values), hi = Math.max(...values, lo + 1);
+  const pts = values.map((v, i) => `${(i / (values.length - 1) * (w - 4) + 2).toFixed(1)},${(h - 3 - (v - lo) / (hi - lo) * (h - 6)).toFixed(1)}`);
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><path d="M${pts.join(' L')}"/></svg>`;
+}
+
+// ---------- Setup screen ----------
+function setupRunway(industry, difficulty) {
+  // Real computation of the founding team's burn vs starting cash, before any revenue.
+  const d = DIFFICULTY[difficulty], ind = INDUSTRIES[industry];
+  const payroll = (DEPTS.eng.salary * 2 + DEPTS.sales.salary) * d.salary / 4;
+  const overhead = (18000 + 5000 * 3 + ind.compliance) * d.overhead;
+  const burn = payroll + overhead + 15000;
+  return { burn, months: d.cash / (burn / 3), cash: d.cash };
+}
+function renderSetup() {
+  const st = UI.setup;
+  applyIndustryTheme(st.industry);
+  const rw = setupRunway(st.industry, st.difficulty);
+  const hz = HORIZONS[st.horizon];
+  $('#app').innerHTML = `
+  <div class="setup-scroll"><div class="setup">
+    <div class="setup-head">
+      <p class="eyebrow">A founder's game, played one quarter at a time</p>
+      <h1>Build a Billion-Dollar Company</h1>
+      <p class="lede">You have a little money, three people, and an idea. Hire well, ship often, raise when it counts, and get out the door before the clock runs out.</p>
+    </div>
+    <div class="field">
+      <label for="co-name">Company name</label>
+      <div class="name-row"><input id="co-name" data-input="co-name" maxlength="32" value="${esc(st.name)}" placeholder="Name your company" autocomplete="off"><button class="btn ghost" data-act="suggest-name">Suggest one</button></div>
+    </div>
+    <div class="field">
+      <span class="label">Industry</span>
+      <div class="industry-grid" role="radiogroup" aria-label="Industry">
+        ${Object.entries(INDUSTRIES).map(([k, ind]) => `
+        <button class="industry-card${st.industry === k ? ' on' : ''}" role="radio" aria-checked="${st.industry === k}" data-act="pick-industry" data-v="${k}">
+          <span class="ic-top">${mascotSVG(ind.advisor.kind, 34)}<span class="ic-name">${ind.name}</span></span>
+          <span class="ic-blurb">${ind.blurb}</span>
+          <span class="ic-stats"><span>${Math.round(ind.margin * 100)}% margin</span><span>${fmtPct(ind.churn)} churn/mo</span><span>${ind.multiple}× ARR</span></span>
+        </button>`).join('')}
+      </div>
+    </div>
+    <div class="setup-row">
+      <div class="field">
+        <span class="label">Difficulty</span>
+        <div class="seg" role="radiogroup" aria-label="Difficulty">${Object.entries(DIFFICULTY).map(([k, d]) => `<button role="radio" aria-checked="${st.difficulty === k}" class="${st.difficulty === k ? 'on' : ''}" data-act="pick-difficulty" data-v="${k}">${d.name}</button>`).join('')}</div>
+        <p class="hint">${DIFFICULTY[st.difficulty].blurb}</p>
+      </div>
+      <div class="field">
+        <span class="label">Time horizon</span>
+        <div class="seg" role="radiogroup" aria-label="Time horizon">${Object.keys(HORIZONS).map((k) => `<button role="radio" aria-checked="${+k === st.horizon}" class="${+k === st.horizon ? 'on' : ''}" data-act="pick-horizon" data-v="${k}">${k} yrs</button>`).join('')}</div>
+        <p class="hint"><strong>${hz.label}.</strong> ${hz.blurb}</p>
+      </div>
+    </div>
+    <div class="setup-foot">
+      <p class="setup-sum">You start with <strong>${fmtMoney(rw.cash)}</strong> and a three-person team burning about <strong>${fmtMoney(rw.burn)}</strong> a quarter: <strong>${Math.floor(rw.months)} months</strong> of runway before your first customer pays you. ${INDUSTRIES[st.industry].advisor.name} the ${INDUSTRIES[st.industry].advisor.kind} will advise; ${INDUSTRIES[st.industry].news.name} the ${INDUSTRIES[st.industry].news.kind === 'dish' ? 'dish' : INDUSTRIES[st.industry].news.kind} runs the newsroom.</p>
+      <button class="btn primary big" data-act="start">Found the company</button>
+    </div>
+  </div></div>`;
+}
+
+// ---------- Game screen ----------
+function advanceDisabled() { return !S || !!S.gameOver || S.modalQueue.length > 0 || UI.screen !== 'game'; }
+
+function renderTopbar() {
+  const el = $('#topbar'); if (!el) return;
+  const rw = runwayMonths();
+  const rec = recessionNow();
+  const pct = (S.turn / S.totalTurns) * 100;
+  const bands = S.recessions.filter((r) => r.announced).map((r) => `<span class="clock-rec" style="left:${r.start / S.totalTurns * 100}%;width:${(Math.min(r.end, S.turn) - r.start) / S.totalTurns * 100}%"></span>`).join('');
+  el.innerHTML = `
+    <div class="tb-brand">
+      <div class="tb-name">${esc(S.company)}</div>
+      <div class="tb-meta">${IND().name} · ${DIF().name} · ${HOR().label}, ${S.horizon} years</div>
+    </div>
+    <div class="tb-clock">
+      <div class="tb-clock-row"><strong>${clockLabel(S.turn)}</strong><span>Quarter ${S.turn + 1} of ${S.totalTurns}</span>${rec ? '<span class="pill bad">Recession</span>' : ''}</div>
+      <div class="clock-bar" aria-hidden="true"><span class="clock-fill" style="width:${pct}%"></span>${bands}</div>
+    </div>
+    <dl class="tb-stats">
+      <div><dt>Cash</dt><dd class="${S.cash < 0 ? 'neg' : ''}">${fmtMoney(S.cash)}</dd></div>
+      <div><dt>Runway</dt><dd class="${rw < 6 ? 'neg' : rw < 12 ? 'warn' : ''}">${fmtRunway(rw)}</dd></div>
+      <div><dt>ARR</dt><dd>${fmtMoney(currentARR())}</dd></div>
+      <div><dt>Valuation</dt><dd>${fmtMoney(S.valuation)}</dd></div>
+      <div><dt>Your stake</dt><dd>${fmtPct(S.founderOwnership)}</dd></div>
+    </dl>
+    <button id="advance-btn" class="btn primary advance" data-act="advance" ${advanceDisabled() ? 'disabled' : ''}>Advance quarter <span aria-hidden="true">→</span></button>`;
+}
+
+const TABS = [['overview', 'Overview'], ['team', 'Team'], ['payroll', 'Payroll'], ['product', 'Product'], ['markets', 'Markets'], ['funding', 'Funding'], ['log', 'Log']];
+function renderGame() {
+  applyIndustryTheme(S.industry);
+  const badge = (k) => {
+    if (k === 'overview' && S.events.length) return `<span class="tab-badge">${S.events.length}</span>`;
+    if (k === 'team') return `<span class="tab-count">${S.employees.length}</span>`;
+    if (k === 'funding' && roundStatus().state === 'open') return '<span class="tab-dot" aria-label="round open"></span>';
+    if (k === 'product' && S.product.points >= shipCost()) return '<span class="tab-dot" aria-label="ready to ship"></span>';
+    return '';
+  };
+  $('#app').innerHTML = `
+  <div class="game">
+    <header class="topbar" id="topbar"></header>
+    <nav class="tabs" role="tablist">${TABS.map(([k, l]) => `<button role="tab" aria-selected="${UI.tab === k}" class="tab${UI.tab === k ? ' on' : ''}" data-act="tab" data-v="${k}">${l}${badge(k)}</button>`).join('')}</nav>
+    <main class="tab-body" id="tab-body">${TAB_RENDER[UI.tab]()}</main>
+  </div>`;
+  renderTopbar();
+}
+
+// ---------- Overview ----------
+function eventCard(ev) {
+  const e = empById(ev.empId); if (!e) return '';
+  const who = `<strong>${esc(e.name)}</strong> (${e.revealed ? TIER_INFO[e.tier].label : 'unproven'}, ${DEPTS[e.dept].name})`;
+  if (ev.type === 'overlooked') {
+    const canClap = S.clapsUsed < clapBudget() && S.turn >= e.clapReadyTurn, canBonus = S.turn >= e.bonusReadyTurn;
+    return `<div class="event warn"><div class="event-kind">Feeling overlooked</div>
+      <p>${who} hasn't been recognized in ${quartersSinceRecog(e)} quarters and has hit a rough patch. They feel their work goes unnoticed.</p>
+      <div class="event-actions"><button class="btn" data-act="bonus" data-id="${e.id}" ${canBonus ? '' : 'disabled'}>Bonus · ${fmtMoney(bonusCost(e))}</button><button class="btn ghost" data-act="clap" data-id="${e.id}" ${canClap ? '' : 'disabled'}>Clap${canClap ? '' : ' (used)'}</button><span class="event-note">A bonus usually pulls people out of it. A clap sometimes does.</span></div></div>`;
+  }
+  if (ev.type === 'transfer') {
+    const o = transferOdds(e, ev.to);
+    return `<div class="event"><div class="event-kind">Transfer request</div>
+      <p>${who} asks to move to <strong>${DEPTS[ev.to].name}</strong>. ${o.fit ? `It matches their ${e.skill} skill.` : `Their ${e.skill} skill fits ${DEPTS[SKILLS[e.skill].dept].name} better.`} Their track record suggests about <strong>${Math.round(o.good * 100)}%</strong> odds it works out. Ignoring the request will sting.</p>
+      <div class="event-actions"><button class="btn" data-act="approve-request" data-id="${e.id}">Approve the move</button><button class="btn ghost" data-act="decline-request" data-id="${e.id}">Decline</button></div></div>`;
+  }
+  return '';
+}
+function statementRows() {
+  const L = S.last;
+  const row = (label, v, cls = '') => `<tr class="${cls}"><th scope="row">${label}</th><td>${fmtMoney(v)}</td></tr>`;
+  return row('Revenue', L.revenue) + row('Cost of revenue', -L.cogs) + row('Gross profit', L.gp, 'sub') +
+    row('Payroll', -L.payroll) + row('Overhead', -L.overhead) + row('Marketing', -L.marketing) +
+    row('Operating result', L.net, 'total' + (L.net < 0 ? ' neg' : '')) +
+    (L.oneTime ? row('One-time spend (hires, launches, entries)', -L.oneTime) : '') +
+    row('Change in cash', L.net - L.oneTime, 'sub');
+}
+function renderOverview() {
+  const L = S.last; const ind = IND();
+  const events = S.events.slice(0, 6).map(eventCard).join('') + (S.events.length > 6 ? `<p class="fine">${S.events.length - 6} more people need attention. Look for rough patches and requests on the Team tab.</p>` : '');
+  const hist = S.history;
+  const ipo = ipoStatus();
+  const arr = currentARR();
+  const custs = totalCustomers();
+  const churnM = L ? L.churnRate : ind.churn * DIF().churn;
+  const arpu = custs > 0 ? totalRevenue() / custs / 3 : ind.arpu * productArpuMult();
+  const cac = L && L.cac ? L.cac : ind.cac * DIF().cac;
+  const ltv = arpu * ind.margin / Math.max(0.001, churnM);
+  const deptCounts = DEPT_KEYS.map((d) => { const es = S.employees.filter((e) => e.dept === d); return { d, n: es.length, out: sum(es, empOutput) }; });
+  const maxSpend = Math.max(200000, Math.ceil(Math.max(S.marketingSpend, S.cash * 0.25) / 50000) * 50000);
+  return `
+  <div class="ov-grid">
+    <div class="col">
+      <section class="panel">
+        <div class="panel-head"><h2>This quarter</h2><span class="muted">${clockLabel(S.turn)}</span></div>
+        ${events || `<p class="quiet">Nothing needs your decision this quarter. Check the team for anyone who could use some recognition, then advance when you're ready.</p>`}
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Last quarter</h2>${L ? `<span class="muted">${clockLabel(S.turn - 1)}</span>` : ''}</div>
+        ${L ? `<table class="statement">${statementRows()}</table>
+          <p class="fine">${fmtNum(L.newMkt)} ${ind.unit} from marketing, ${fmtNum(L.newSales)} from sales, ${fmtNum(L.churned)} churned. Support coverage ${L.coverage >= 1 ? 'is comfortable' : `is at ${Math.round(L.coverage * 100)}%, so churn runs higher`}.</p>`
+          : `<p class="quiet">Your first quarter's numbers appear here after you advance. Projected operating result: <strong>${fmtMoney(projectedNet())}</strong> a quarter.</p>`}
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>ARR and cash</h2><span class="legend"><i style="background:var(--accent)"></i>ARR <i style="background:var(--second)"></i>Cash</span></div>
+        ${lineChart([{ label: 'ARR', color: 'var(--accent)', values: hist.map((h) => h.arr) }, { label: 'Cash', color: 'var(--second)', values: hist.map((h) => h.cash) }])}
+      </section>
+    </div>
+    <div class="col">
+      <section class="panel">
+        <div class="panel-head"><h2>Marketing budget</h2><span class="num" id="mkt-val">${fmtMoney(S.marketingSpend)}/q</span></div>
+        <input type="range" id="mkt-range" data-input="marketing" min="0" max="${maxSpend}" step="5000" value="${S.marketingSpend}" aria-label="Marketing spend per quarter">
+        <p class="fine">Spread across ${enteredMarkets().length} market${enteredMarkets().length > 1 ? 's' : ''} by size. Each market saturates: past a point, more money buys fewer ${ind.unit}. Last quarter's blended CAC: <strong>${L && L.cac ? fmtMoney(L.cac) : '—'}</strong>.</p>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Unit economics</h2></div>
+        <dl class="kv">
+          <div><dt>${ind.unit[0].toUpperCase() + ind.unit.slice(1)}</dt><dd>${fmtNum(custs)}</dd></div>
+          <div><dt>ARPU</dt><dd>${fmtMoney(arpu)}/mo</dd></div>
+          <div><dt>Churn</dt><dd>${fmtPct(churnM, 2)}/mo</dd></div>
+          <div><dt>CAC</dt><dd>${fmtMoney(cac)}</dd></div>
+          <div><dt>LTV : CAC</dt><dd class="${ltv / cac < 1 ? 'neg' : ltv / cac >= 3 ? 'pos' : ''}">${(ltv / cac).toFixed(1)}×</dd></div>
+          <div><dt>Gross margin</dt><dd>${Math.round(ind.margin * 100)}%</dd></div>
+        </dl>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>The goal</h2></div>
+        <div class="goal"><div class="goal-row"><span>ARR toward IPO bar</span><span class="num">${fmtMoney(arr)} / ${fmtMoney(ipo.need)}</span></div><div class="meter"><span style="width:${Math.min(100, arr / ipo.need * 100)}%"></span></div></div>
+        <div class="goal"><div class="goal-row"><span>Valuation toward $1B</span><span class="num">${fmtMoney(S.valuation)}</span></div><div class="meter alt"><span style="width:${Math.min(100, S.valuation / 1e9 * 100)}%"></span></div></div>
+        <p class="fine">${S.horizon <= 5 ? 'In a five-year game, a strong acquisition or a big raise is a real win. The IPO bar is there for the bold.' : `${S.totalTurns - S.turn} quarters left on the clock.`}</p>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Team at a glance</h2><button class="link" data-act="tab" data-v="team">Open team</button></div>
+        <dl class="kv">${deptCounts.map((c) => `<div><dt>${DEPTS[c.d].name}</dt><dd>${c.n} <span class="muted">· ${c.out.toFixed(1)} output</span></dd></div>`).join('')}</dl>
+        <p class="fine">Claps left this quarter: ${clapBudget() - S.clapsUsed} of ${clapBudget()}.${S.rival.strength > 0 ? ` ${esc(S.rival.name)} has raised your acquisition costs by ${Math.round(S.rival.strength * 100)}% with talent that used to be yours.` : ''}</p>
+      </section>
+    </div>
+  </div>`;
+}
+
+// ---------- Team ----------
+function tierPill(e) {
+  if (!e.revealed) return `<span class="pill unknown" title="Their baseline is hidden until a full quarter is in">${e.prevTier ? 'Settling in' : 'Onboarding'}</span>`;
+  return `<span class="pill tier-${e.tier}">${TIER_INFO[e.tier].label}</span>`;
+}
+function tempChip(e) {
+  if (!e.temp) return '';
+  const t = e.temp; const cls = t.type === 'rough' ? 'bad' : 'good';
+  return `<span class="pill ${cls}" title="${esc(t.reason)}">${TEMP_INFO[t.type].label}${t.reason === 'feeling overlooked' ? ': overlooked' : ''} · ${t.left}q</span>`;
+}
+function empCard(e) {
+  const risk = flightRisk(e); const rl = riskLabel(risk);
+  const fit = isFit(e);
+  const since = quartersSinceRecog(e);
+  const canBonus = S.turn >= e.bonusReadyTurn, canClap = S.turn >= e.clapReadyTurn && S.clapsUsed < clapBudget();
+  const pt = UI.pendingTransfer[e.id];
+  const pm = UI.pendingMarket[e.id];
+  const skillDept = SKILLS[e.skill].dept;
+  const transferOpts = DEPT_KEYS.filter((d) => d !== e.dept).map((d) => {
+    const marks = []; if (d === skillDept) marks.push('skill fit'); if (d === e.origDept) marks.push('original dept');
+    return `<option value="${d}" ${pt === d ? 'selected' : ''}>${DEPTS[d].name}${marks.length ? ' — ' + marks.join(', ') : ''}</option>`;
+  }).join('');
+  let salesBlock = '';
+  if (e.dept === 'sales') {
+    const opts = enteredMarkets().map((m) => {
+      const tag = m.id === e.nativeMarket ? ' — native' : '';
+      return `<option value="${m.id}" ${(pm != null ? pm : e.market) === m.id ? 'selected' : ''}>${esc(m.name)}${tag}</option>`;
+    }).join('');
+    const tm = traitMult(e);
+    salesBlock = `<div class="emp-sales"><div><span class="k">Trait</span> ${SALES_TRAITS[e.trait].label} <span class="muted">· native to ${esc(marketById(e.nativeMarket).name)}</span></div>
+      <div class="emp-market"><label for="mkt-${e.id}" class="k">Market</label><select id="mkt-${e.id}" data-change="market-select" data-id="${e.id}">${opts}</select><span class="pill ${tm > 1 ? 'good' : tm < 1 ? 'bad' : ''}">${tm > 1 ? 'Trait fit' : tm < 1 ? 'Off-trait' : 'Neutral'} ${tm.toFixed(2)}×</span></div>
+      ${pm != null && pm !== e.market ? (() => { const f = traitFitText(e, pm); return `<div class="confirm-row ${f.ok ? '' : 'risky'}"><p>${f.text} Expect a one-quarter adjustment dip.</p><button class="btn small" data-act="market-confirm" data-id="${e.id}">Reassign</button><button class="btn small ghost" data-act="market-cancel" data-id="${e.id}">Cancel</button></div>`; })() : ''}</div>`;
+  }
+  const transferConfirm = pt ? (() => {
+    const o = transferOdds(e, pt);
+    return `<div class="confirm-row ${o.good >= 0.6 ? '' : 'risky'}"><p>Move to ${DEPTS[pt].name}? ${o.fit ? 'Matches their skill. ' : ''}${pt === e.origDept ? 'It’s where they started. ' : ''}A transfer re-rolls their performance: about <strong>${Math.round(o.good * 100)}%</strong> odds they land Solid or better.</p><button class="btn small" data-act="transfer-confirm" data-id="${e.id}">Transfer</button><button class="btn small ghost" data-act="transfer-cancel" data-id="${e.id}">Cancel</button></div>`;
+  })() : '';
+  const req = e.request ? `<div class="emp-request">Asked to move to ${DEPTS[e.request].name}. <button class="link" data-act="approve-request" data-id="${e.id}">Approve</button> · <button class="link" data-act="decline-request" data-id="${e.id}">Decline</button></div>` : '';
+  return `<article class="emp${e.temp && e.temp.type === 'rough' ? ' is-rough' : ''}">
+    <header class="emp-head"><div><h3 class="emp-name">${esc(e.name)}</h3><div class="emp-sub">${DEPTS[e.dept].name} · ${fmtTenure(tenure(e))}</div></div><div class="emp-out" title="Effective output this quarter"><span class="num">${empOutput(e).toFixed(2)}×</span><span>output</span></div></header>
+    <div class="chips">${tierPill(e)}${tempChip(e)}</div>
+    <div class="emp-skill"><span class="k">Skill</span> ${e.skill} ${fit ? `<span class="pill good">Fits ${DEPTS[e.dept].short} +20%</span>` : `<span class="muted">· suits ${DEPTS[skillDept].name}</span>`}</div>
+    ${salesBlock}
+    <div class="emp-risk"><span class="k">Flight risk</span><span class="risk-meter r-${rl.toLowerCase()}"><span style="width:${risk}%"></span></span><span class="risk-label r-${rl.toLowerCase()}">${rl}</span><span class="muted">${since === 0 ? 'recognized this quarter' : `${since}q since recognition`}</span></div>
+    ${req}
+    <ol class="emp-hist">${e.history.slice(-4).reverse().map((h) => `<li><span class="when">${clockLabel(h.turn)}</span> ${esc(h.text)}</li>`).join('')}</ol>
+    <div class="emp-actions">
+      <button class="btn small" data-act="bonus" data-id="${e.id}" ${canBonus ? '' : 'disabled'} title="${canBonus ? 'Cash bonus' : 'Bonus available again next quarter'}">Bonus · ${fmtMoney(bonusCost(e))}</button>
+      <button class="btn small ghost" data-act="clap" data-id="${e.id}" ${canClap ? '' : 'disabled'} title="Free public recognition">Clap</button>
+      <select aria-label="Transfer ${esc(e.name)} to another department" data-change="transfer-select" data-id="${e.id}"><option value="">Move to…</option>${transferOpts}</select>
+      ${UI.confirmFire === e.id ? `<button class="btn small danger" data-act="fire" data-id="${e.id}">Confirm · ${fmtMoney(severance(e))} severance</button><button class="btn small ghost" data-act="fire-cancel">Keep</button>` : `<button class="btn small ghost danger-text" data-act="fire" data-id="${e.id}">Let go</button>`}
+    </div>
+    ${transferConfirm}
+    <div class="emp-foot muted">${fmtMoney(e.salary)}/yr${e.origDept !== e.dept ? ` · started in ${DEPTS[e.origDept].name}` : ''}</div>
+  </article>`;
+}
+const DEPT_ROLE = {
+  eng: 'Builds toward the next release.', sales: 'Closes deals in one market.', mkt: 'Makes every marketing dollar go further.', ops: 'Keeps churn and overhead in check.',
+};
+function renderTeam() {
+  const list = S.employees.filter((e) => UI.teamFilter === 'all' || e.dept === UI.teamFilter);
+  const hm = UI.hireMarket != null && marketById(UI.hireMarket) && marketById(UI.hireMarket).entered ? UI.hireMarket : homeMarket().id;
+  return `
+  <section class="panel hire-panel">
+    <div class="panel-head"><h2>Hire</h2><span class="muted">Every hire is a person. You'll learn how good they are after one quarter.</span></div>
+    <div class="hire-grid">${DEPT_KEYS.map((d) => {
+      const sal = DEPTS[d].salary * DIF().salary * wageIndex();
+      return `<div class="hire-card"><div class="hire-name">${DEPTS[d].name}</div><div class="hire-role">${DEPT_ROLE[d]}</div>
+        <div class="hire-cost">~${fmtMoney(sal)}/yr · ${fmtMoney(hireFee(sal))} to recruit</div>
+        ${d === 'sales' ? `<select id="hire-market" data-change="hire-market" aria-label="Market for the new sales hire">${enteredMarkets().map((m) => `<option value="${m.id}" ${m.id === hm ? 'selected' : ''}>${esc(m.name)}</option>`).join('')}</select>` : ''}
+        <button class="btn" data-act="hire" data-dept="${d}">Hire</button></div>`;
+    }).join('')}</div>
+  </section>
+  <div class="team-bar">
+    <div class="seg small">${[['all', 'Everyone'], ...DEPT_KEYS.map((d) => [d, DEPTS[d].name])].map(([k, l]) => `<button class="${UI.teamFilter === k ? 'on' : ''}" data-act="team-filter" data-v="${k}">${l}</button>`).join('')}</div>
+    <span class="muted">Claps left this quarter: <strong>${clapBudget() - S.clapsUsed}</strong> of ${clapBudget()}</span>
+  </div>
+  ${list.length ? `<div class="emp-grid">${list.map(empCard).join('')}</div>` : `<p class="quiet panel">Nobody here yet. Hire someone above.</p>`}`;
+}
+
+// ---------- Payroll ----------
+const PAY_COLS = [
+  ['name', 'Name', (e) => e.last + e.first], ['dept', 'Department', (e) => e.dept + e.last],
+  ['perf', 'Performance', (e) => (e.revealed ? tierIdx(e.tier) : 9)], ['skill', 'Skill', (e) => e.skill],
+  ['market', 'Market', (e) => (e.market != null ? marketById(e.market).name : '~')], ['tenure', 'Tenure', (e) => tenure(e)],
+  ['salary', 'Salary', (e) => e.salary], ['output', 'Output', (e) => empOutput(e)],
+];
+function renderPayroll() {
+  const col = PAY_COLS.find((c) => c[0] === UI.sort.key) || PAY_COLS[1];
+  const rows = S.employees.slice().sort((a, b) => { const x = col[2](a), y = col[2](b); return (x < y ? -1 : x > y ? 1 : 0) * UI.sort.dir; });
+  const total = sum(S.employees, (e) => e.salary);
+  const subs = DEPT_KEYS.map((d) => { const es = S.employees.filter((e) => e.dept === d); return { d, n: es.length, sal: sum(es, (e) => e.salary), out: sum(es, empOutput) }; });
+  return `
+  <section class="panel">
+    <div class="panel-head"><h2>Payroll</h2><span class="muted">${S.employees.length} people · ${fmtMoney(total)}/yr · ${fmtMoney(total / 4)} this quarter</span></div>
+    <div class="table-wrap"><table class="data sortable">
+      <thead><tr>${PAY_COLS.map(([k, l]) => `<th scope="col"><button class="th-btn${UI.sort.key === k ? ' on' : ''}" data-act="sort" data-v="${k}">${l}${UI.sort.key === k ? (UI.sort.dir > 0 ? ' ↑' : ' ↓') : ''}</button></th>`).join('')}</tr></thead>
+      <tbody>${rows.map((e) => `<tr>
+        <td>${esc(e.name)}</td><td>${DEPTS[e.dept].name}</td>
+        <td>${e.revealed ? TIER_INFO[e.tier].label : '<span class="muted">Unknown</span>'}${e.temp ? ` <span class="muted">· ${TEMP_INFO[e.temp.type].label}</span>` : ''}</td>
+        <td>${e.skill}${isFit(e) ? ' <span class="fit-mark" title="Skill fits department">✓</span>' : ''}</td>
+        <td>${e.market != null ? esc(marketById(e.market).name) : '<span class="muted">—</span>'}</td>
+        <td class="num">${fmtTenure(tenure(e))}</td><td class="num">${fmtMoney(e.salary)}</td><td class="num">${empOutput(e).toFixed(2)}×</td></tr>`).join('')}</tbody>
+      <tfoot>${subs.map((s) => `<tr class="subtotal"><td colspan="2">${DEPTS[s.d].name}</td><td colspan="4">${s.n} ${s.n === 1 ? 'person' : 'people'}</td><td class="num">${fmtMoney(s.sal)}</td><td class="num">${s.out.toFixed(2)}</td></tr>`).join('')}
+        <tr class="grand"><td colspan="2">Total</td><td colspan="4">${S.employees.length} people</td><td class="num">${fmtMoney(total)}</td><td class="num">${sum(subs, (s) => s.out).toFixed(2)}</td></tr></tfoot>
+    </table></div>
+  </section>`;
+}
+
+// ---------- Product ----------
+function renderProduct() {
+  const lvl = S.product.level; const cost = shipCost(); const pts = S.product.points;
+  const engOut = sum(S.employees.filter((e) => e.dept === 'eng'), empOutput) + 0.3;
+  const eta = pts >= cost ? 0 : Math.ceil((cost - pts) / Math.max(0.1, engOut));
+  const { cur, next } = stageFor(lvl);
+  const ladder = STAGES.concat(lvl >= 30 ? [next] : []);
+  const ind = IND();
+  return `
+  <div class="ov-grid">
+    <div class="col">
+      <section class="panel product-hero">
+        <div class="ph-version"><span class="ph-v">v${lvl}</span><span class="ph-stage">${cur.name}</span></div>
+        <ol class="ladder">${ladder.map((s) => `<li class="${lvl >= s.at ? 'done' : ''}${s === cur || s.name === cur.name ? ' cur' : ''}"><span class="dot"></span><span class="lname">${s.name}</span><span class="lat">v${s.at}</span></li>`).join('')}</ol>
+        <p class="fine">${next ? `${next.at - lvl} more release${next.at - lvl > 1 ? 's' : ''} to ${next.name}.` : ''} There is no final version. Keep shipping.</p>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Next release</h2><span class="muted">v${lvl + 1}</span></div>
+        <div class="goal"><div class="goal-row"><span>Engineering progress</span><span class="num">${pts.toFixed(1)} / ${cost.toFixed(1)}</span></div><div class="meter"><span style="width:${Math.min(100, pts / cost * 100)}%"></span></div></div>
+        <p class="fine">Engineering delivers about <strong>${engOut.toFixed(1)}</strong> points a quarter${ind.buildMult > 1.3 ? ', and hardware takes longer to build' : ''}. ${eta === 0 ? 'Ready to ship now.' : `About ${eta} quarter${eta > 1 ? 's' : ''} at this pace.`}</p>
+        <dl class="kv">
+          <div><dt>ARPU</dt><dd>${fmtMoney(ind.arpu * productArpuMult(lvl))} → <strong>${fmtMoney(ind.arpu * productArpuMult(lvl + 1))}</strong>/mo</dd></div>
+          <div><dt>Churn factor</dt><dd>${productChurnMult(lvl).toFixed(2)} → <strong>${productChurnMult(lvl + 1).toFixed(2)}</strong></dd></div>
+          <div><dt>Launch cost</dt><dd>${fmtMoney(shipCash())}</dd></div>
+        </dl>
+        <button class="btn primary" data-act="ship" ${pts >= cost ? '' : 'disabled'}>Ship v${lvl + 1}</button>
+      </section>
+    </div>
+    <div class="col">
+      <section class="panel">
+        <div class="panel-head"><h2>Release history</h2></div>
+        ${S.product.shipped.length ? `<ol class="releases">${S.product.shipped.slice().reverse().map((r) => `<li><span class="num">v${r.level}</span> <em>“${r.code}”</em><span class="muted">${clockLabel(r.turn)}</span></li>`).join('')}</ol>` : '<p class="quiet">Nothing shipped yet beyond the MVP. Your two engineers are on it.</p>'}
+      </section>
+    </div>
+  </div>`;
+}
+
+// ---------- Markets ----------
+function renderMarkets() {
+  const ent = enteredMarkets(); const avail = S.markets.filter((m) => !m.entered);
+  const reps = (m) => S.employees.filter((e) => e.dept === 'sales' && e.market === m.id).length;
+  const ind = IND();
+  const totals = { c: totalCustomers(), r: totalRevenue(), n: sum(ent, (m) => m.newCust), ch: sum(ent, (m) => m.churned) };
+  return `
+  <section class="panel">
+    <div class="panel-head"><h2>Your markets</h2><span class="muted">${ent.length} active</span></div>
+    <div class="table-wrap"><table class="data" id="markets-table">
+      <thead><tr><th>Market</th><th class="num">${ind.unit[0].toUpperCase() + ind.unit.slice(1)}</th><th class="num">Revenue/q</th><th class="num">New</th><th class="num">Churned</th><th class="num">Reps</th><th class="num">Price</th><th class="num">Reached</th><th>Trend</th><th>Status</th></tr></thead>
+      <tbody>${ent.map((m) => { const st = marketStatus(m); return `<tr data-market="${m.id}">
+        <td>${esc(m.name)}${m.home ? ' <span class="muted">home</span>' : ''}</td><td class="num" data-c="${m.customers}">${fmtNum(m.customers)}</td><td class="num" data-r="${m.revenue}">${fmtMoney(m.revenue)}</td>
+        <td class="num">${fmtNum(m.newCust)}</td><td class="num">${fmtNum(m.churned)}</td><td class="num">${reps(m)}</td><td class="num">${m.arpu.toFixed(2)}×</td><td class="num">${fmtPct(Math.min(1, penetration(m)), 0)}</td>
+        <td>${sparkline(m.hist)}</td><td><span class="pill ${st.key === 'bad' ? 'bad' : st.key === 'good' ? 'good' : ''}">${st.label}</span></td></tr>`; }).join('')}</tbody>
+      <tfoot><tr class="grand"><td>All markets</td><td class="num" id="mt-c" data-c="${totals.c}">${fmtNum(totals.c)}</td><td class="num" id="mt-r" data-r="${totals.r}">${fmtMoney(totals.r)}</td><td class="num">${fmtNum(totals.n)}</td><td class="num">${fmtNum(totals.ch)}</td><td class="num">${S.employees.filter((e) => e.dept === 'sales').length}</td><td colspan="4"></td></tr></tfoot>
+    </table></div>
+    <p class="fine">Marketing is split by market size. Sales reps sell only in the market they're assigned to; reassign them from their card on the Team tab. <em>Reached</em> is the share of a market's likely buyers you already have. New customers get harder to find as it climbs.</p>
+  </section>
+  <section class="panel">
+    <div class="panel-head"><h2>Expand</h2><span class="muted">${avail.length} known markets</span></div>
+    <div class="market-grid">
+      <div class="market-card scout"><div class="mc-name">Scout a new market</div><p class="fine">Send a team to map somewhere nobody's charted yet. There is always somewhere else to go.</p><button class="btn" data-act="scout">Scout · ${fmtMoney(scoutCost())}</button></div>
+      ${avail.map((m) => `<div class="market-card"><div class="mc-name">${esc(m.name)}${m.scouted ? ' <span class="pill">Scouted</span>' : ''}</div>
+        <dl class="mc-stats"><div><dt>Price level</dt><dd>${m.arpu.toFixed(2)}×</dd></div><div><dt>Growth</dt><dd>${m.growth.toFixed(2)}×</dd></div><div><dt>Size</dt><dd>${m.size.toFixed(2)}</dd></div><div><dt>Overhead</dt><dd>${fmtMoney(m.overhead)}/q</dd></div></dl>
+        <button class="btn" data-act="enter-market" data-id="${m.id}" ${S.cash >= m.entry ? '' : 'disabled'}>Enter · ${fmtMoney(m.entry)}</button></div>`).join('')}
+    </div>
+  </section>`;
+}
+
+// ---------- Funding ----------
+function renderFunding() {
+  const fs = roundStatus(); const ipo = ipoStatus();
+  return `
+  <div class="ov-grid">
+    <div class="col">
+      <section class="panel">
+        <div class="panel-head"><h2>Funding rounds</h2></div>
+        <ol class="rounds">${ROUNDS.map((r, i) => {
+          const raised = S.funding.raised.find((x) => x.key === r.key);
+          let body;
+          if (raised) body = `<span class="pill good">Raised</span> ${fmtMoney(raised.cash)} for ${fmtPct(raised.eq)} from ${esc(raised.investor)} <span class="muted">· ${fmtMoney(raised.post)} post · ${clockLabel(raised.turn)}</span>`;
+          else if (i === S.funding.next && fs.state === 'open') body = `<span class="pill accent">Open</span> Investors are ready to talk. <button class="btn small primary" data-act="open-funding">Open negotiations</button>`;
+          else if (i === S.funding.next) body = `<span class="pill">${fs.state === 'cooldown' ? 'Cooling off' : 'Locked'}</span> <span class="muted">${fs.why}</span>`;
+          else body = `<span class="muted">Typical dilution ${Math.round(r.eq[0] * 100)}–${Math.round(r.eq[1] * 100)}%</span>`;
+          return `<li class="${raised ? 'done' : i === S.funding.next ? 'cur' : ''}"><span class="r-name">${r.name}</span><span class="r-body">${body}</span></li>`;
+        }).join('')}</ol>
+        <p class="fine">Investor sentiment right now: <strong>${S.sentiment >= 1.1 ? 'warm' : S.sentiment <= 0.9 ? 'cool' : 'neutral'}</strong>. Warmer sentiment means investors accept less equity for the same check.</p>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Going public</h2></div>
+        <ul class="checks">${ipo.checks.map((c) => `<li class="${c.ok ? 'ok' : ''}"><span class="check-mark">${c.ok ? '✓' : ''}</span>${c.text} <span class="muted">· ${c.now}</span></li>`).join('')}</ul>
+        <button class="btn primary" data-act="ipo" ${ipo.ok ? '' : 'disabled'}>Ring the bell</button>
+      </section>
+    </div>
+    <div class="col">
+      <section class="panel">
+        <div class="panel-head"><h2>Cap table</h2></div>
+        <ul class="cap">${[{ name: 'You (founder)', pct: S.founderOwnership }, ...S.capTable].map((h) => `<li><span>${esc(h.name)}</span><span class="cap-bar"><span style="width:${h.pct * 100}%"></span></span><span class="num">${fmtPct(h.pct)}</span></li>`).join('')}</ul>
+        <p class="fine">Your stake is worth about <strong>${fmtMoney(S.founderOwnership * S.valuation)}</strong> at today's valuation.</p>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Buyers</h2></div>
+        <p class="quiet">${S.offersDeclined.length ? `You've turned down ${S.offersDeclined.length} offer${S.offersDeclined.length > 1 ? 's' : ''}: ${S.offersDeclined.map((o) => `${esc(o.buyer)} at ${fmtMoney(o.offer)} (${clockLabel(o.turn)})`).join('; ')}.` : 'No offers yet. Buyers call when they’re interested, and more often in shorter games.'}</p>
+      </section>
+    </div>
+  </div>`;
+}
+
+// ---------- Log ----------
+function renderLog() {
+  const byTurn = {};
+  S.log.forEach((l) => { (byTurn[l.turn] = byTurn[l.turn] || []).push(l); });
+  const turns = Object.keys(byTurn).map(Number).sort((a, b) => b - a);
+  return `<section class="panel"><div class="panel-head"><h2>Company log</h2></div>
+    ${turns.map((t) => `<div class="log-q"><h3>${clockLabel(t)}</h3><ul>${byTurn[t].map((l) => `<li class="k-${l.kind}">${esc(l.text)}</li>`).join('')}</ul></div>`).join('')}</section>`;
+}
+
+const TAB_RENDER = { overview: renderOverview, team: renderTeam, payroll: renderPayroll, product: renderProduct, markets: renderMarkets, funding: renderFunding, log: renderLog };
+
+/* =====================================================================
+   Modals, mascots, report screen, actions, boot
+   ===================================================================== */
+
+// ---------- Modals ----------
+// Every modal goes through renderModal(), which also owns the Advance button's
+// disabled state, so no caller can open a blocking modal and leave Advance live.
+const MODALS = {
+  funding: {
+    render(m) {
+      const r = ROUNDS[m.roundIdx], t = m.terms;
+      const lo = t.fair * 0.85, hi = t.fair * 1.15;
+      const pos = (x) => ((x - t.min) / (t.max - t.min)) * 100;
+      return `<p class="eyebrow">${r.name} round</p><h2 id="modal-title">Set your terms</h2>
+        <p class="prose">Investors value ${esc(S.company)} at roughly <strong>${fmtMoney(t.preBasis)}</strong> before their money goes in. Choose how much of the company to offer. Offer more and you raise more cash at a lower price. Offer less and you are asking for a richer valuation.</p>
+        <div class="slider-block">
+          <label for="fund-eq" class="label">Equity offered</label>
+          <input type="range" id="fund-eq" data-input="fund-eq" min="${Math.round(t.min * 1000)}" max="${Math.round(t.max * 1000)}" step="5" value="${Math.round(m.eq * 1000)}">
+          <div class="slider-scale"><span>${fmtPct(t.min)}</span><span class="band" style="left:${pos(lo)}%;width:${pos(hi) - pos(lo)}%" title="What investors expect right now"></span><span>${fmtPct(t.max)}</span></div>
+          <p class="fine">The shaded band is what similar ${r.name} rounds are going for right now.</p>
+        </div>
+        <dl class="quote">
+          <div><dt>Equity offered</dt><dd id="fq-eq"></dd></div>
+          <div><dt>Cash raised</dt><dd id="fq-cash"></dd></div>
+          <div><dt>Post-money valuation</dt><dd id="fq-post"></dd></div>
+          <div><dt>Your stake after</dt><dd id="fq-own"></dd></div>
+        </dl>
+        <p class="fq-note" id="fq-note"></p>
+        <div class="modal-actions"><button class="btn ghost" data-act="fund-close">Not now</button><button class="btn primary" data-act="fund-offer">Make the offer</button></div>`;
+    },
+    mount(m) { updateFundingQuote(m); },
+  },
+  counter: {
+    render(m) {
+      const r = ROUNDS[m.roundIdx];
+      return `<p class="eyebrow">${r.name} round</p><h2 id="modal-title">They came back with a counter</h2>
+        <p class="prose">${esc(m.investor)} likes the company but not the price. You asked them to put in <strong>${fmtMoney(m.cash)}</strong> for <strong>${fmtPct(m.askEq)}</strong>, a ${fmtMoney(m.cash / m.askEq)} post-money valuation. They'll write the same check for <strong>${fmtPct(m.theirEq)}</strong>.</p>
+        <div class="offer-grid three">
+          <div class="offer"><div class="offer-name">Accept their terms</div><div class="offer-cost">${fmtPct(m.theirEq)} for ${fmtMoney(m.cash)}</div><div class="offer-odds">Certain</div><button class="btn primary" data-act="counter-accept">Accept</button></div>
+          <div class="offer"><div class="offer-name">Meet in the middle</div><div class="offer-cost">${fmtPct(m.midEq)} for ${fmtMoney(m.cash)}</div><div class="offer-odds">${Math.round(m.midP * 100)}% they agree</div><button class="btn" data-act="counter-middle">Propose it</button></div>
+          <div class="offer"><div class="offer-name">Walk away</div><div class="offer-cost">No deal this round</div><div class="offer-odds">Investors cool off for 2 quarters</div><button class="btn ghost" data-act="counter-walk">Walk away</button></div>
+        </div>`;
+    },
+  },
+  retain: {
+    render(m) {
+      const e = empById(m.empId); const opts = retainOptions(e); const since = quartersSinceRecog(e);
+      return `<p class="eyebrow">A resignation letter on your desk</p><h2 id="modal-title">${esc(e.name)} wants to leave</h2>
+        <p class="prose">${esc(e.first)} is one of your <strong>${TIER_INFO[e.tier].label}</strong> people in ${DEPTS[e.dept].name} and has an offer from <strong>${esc(m.dest)}</strong>. ${since >= 5 ? `They mention, not unkindly, that nobody has recognized their work in ${since} quarters.` : e.grievance > 6 ? 'They have felt unheard lately.' : 'It’s a good offer and they’re tempted.'} You can counter.</p>
+        <div class="offer-grid three">${opts.map((o) => `<div class="offer"><div class="offer-name">${o.label}</div><div class="offer-cost">+${fmtMoney(o.cost)}/yr raise${o.oneTimeCost ? ` and a ${fmtMoney(o.oneTimeCost)} bonus now` : ''}</div><div class="offer-odds">${Math.round(o.p * 100)}% they stay</div><button class="btn${o.key === 'fair' ? ' primary' : ''}" data-act="retain" data-v="${o.key}" ${S.cash >= o.oneTimeCost ? '' : 'disabled'}>Offer ${o.label.toLowerCase()}</button></div>`).join('')}</div>
+        <div class="modal-actions"><button class="btn ghost" data-act="retain" data-v="none">Let them go</button></div>`;
+    },
+  },
+  acquisition: {
+    render(m) {
+      const v = acquisitionVerdict(m.offer); const arr = currentARR();
+      const read = v.key === 'great' ? 'That is a strong price for where you are. I would think hard before saying no.' : v.key === 'ok' ? 'It’s a fair price, not a spectacular one. Staying has upside, and risk.' : 'Your growth says you could be worth a lot more by staying. This feels early.';
+      return `<p class="eyebrow">An offer to buy ${esc(S.company)}</p><h2 id="modal-title">${esc(m.buyer)} offers ${fmtMoney(m.offer)}</h2>
+        <dl class="quote">
+          <div><dt>Versus today's valuation</dt><dd>${(m.offer / S.valuation).toFixed(2)}×</dd></div>
+          <div><dt>Multiple of ARR</dt><dd>${arr > 0 ? (m.offer / arr).toFixed(1) + '×' : '—'}</dd></div>
+          <div><dt>Your stake</dt><dd>${fmtPct(S.founderOwnership)}</dd></div>
+          <div><dt>You would take home</dt><dd>${fmtMoney(m.offer * S.founderOwnership)}</dd></div>
+        </dl>
+        <p class="prose"><strong>${IND().advisor.name}:</strong> “${read}”</p>
+        <p class="fine">Accepting ends the game. Declining keeps you building; buyers won't call again for at least a year.</p>
+        <div class="modal-actions"><button class="btn ghost" data-act="acq-decline">Decline</button><button class="btn primary" data-act="acq-accept">Sell the company</button></div>`;
+    },
+  },
+  bridge: {
+    render(m) {
+      const amt = bridgeAmount();
+      return `<p class="eyebrow">${clockLabel(S.turn)}</p><h2 id="modal-title">You can't make payroll</h2>
+        <p class="prose">Cash is at <strong>${fmtMoney(S.cash)}</strong>. Your bank and two of your angels will wire an emergency bridge of <strong>${fmtMoney(amt)}</strong>, but they want <strong>12%</strong> of the company and they will only do it once.</p>
+        <div class="modal-actions"><button class="btn ghost" data-act="bridge-decline">Close the doors</button><button class="btn primary" data-act="bridge-accept">Take the bridge</button></div>`;
+    },
+  },
+  result: {
+    render(m) {
+      return `<p class="eyebrow">${esc(m.eyebrow)}</p><h2 id="modal-title">${esc(m.title)}</h2><p class="prose">${esc(m.text)}</p>
+        <div class="modal-actions"><button class="btn primary" data-act="result-ok">Continue</button></div>`;
+    },
+  },
+};
+function bridgeAmount() { return Math.round((-S.cash + Math.max(150000, -projectedNet() * 2)) / 10000) * 10000; }
+
+function renderModal() {
+  const root = $('#modal-root');
+  const m = S && UI.screen === 'game' ? S.modalQueue[0] : null;
+  const btn = $('#advance-btn');
+  if (btn) btn.disabled = advanceDisabled();
+  if (!m) { root.innerHTML = ''; root.hidden = true; document.body.classList.remove('modal-open'); return; }
+  root.hidden = false;
+  document.body.classList.add('modal-open');
+  root.innerHTML = `<div class="backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">${MODALS[m.type].render(m)}</div></div>`;
+  if (MODALS[m.type].mount) MODALS[m.type].mount(m);
+  const first = root.querySelector('.modal-actions .btn.primary, .modal .btn');
+  if (first) first.focus({ preventScroll: true });
+}
+function pushModal(m) { S.modalQueue.push(m); }
+function replaceModal(m) { S.modalQueue[0] = m; }
+function closeModal() { S.modalQueue.shift(); }
+
+function openFunding() {
+  const fs = roundStatus(); if (fs.state !== 'open') return;
+  const terms = fundingTerms(fs.r);
+  S.modalQueue.unshift({ type: 'funding', roundIdx: S.funding.next, terms, eq: Math.round(terms.fair * 200) / 200 });
+}
+function updateFundingQuote(m) {
+  const q = fundingQuote(m.terms, m.eq);
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('fq-eq', fmtPct(m.eq));
+  set('fq-cash', fmtMoney(q.cash));
+  set('fq-post', fmtMoney(q.post));
+  set('fq-own', `${fmtPct(S.founderOwnership)} → ${fmtPct(q.ownerAfter)}`);
+  const t = m.terms; const note = document.getElementById('fq-note');
+  if (note) {
+    if (m.eq < t.fair * 0.85) { note.textContent = 'An aggressive ask. Investors may push back with a counter-offer.'; note.className = 'fq-note warn'; }
+    else if (m.eq > t.fair * 1.25) { note.textContent = 'Generous. They will sign today, but you are giving away more than you need to.'; note.className = 'fq-note'; }
+    else { note.textContent = 'Within the range investors expect. This should close cleanly.'; note.className = 'fq-note ok'; }
+  }
+}
+function submitFundingOffer(m) {
+  const r = ROUNDS[m.roundIdx], t = m.terms, e = m.eq, q = fundingQuote(t, e);
+  const thr = t.fair * 0.85;
+  if (e >= thr) { closeModal(); closeRound(r, e, q.cash); toast(`${r.name} closed: ${fmtMoney(q.cash)} for ${fmtPct(e)}.`, 'good'); return; }
+  const p = clamp(0.4 + ((thr - e) / t.fair) * 2.5, 0, 0.95);
+  if (chance(p)) {
+    const theirEq = q.cash / (t.preBasis + q.cash);
+    const midEq = (e + theirEq) / 2;
+    replaceModal({ type: 'counter', roundIdx: m.roundIdx, terms: t, askEq: e, cash: q.cash, theirEq, midEq, midP: clamp(0.55 + (S.sentiment - 1) * 0.8, 0.3, 0.8), investor: pick(INVESTORS[r.key]) });
+  } else {
+    closeModal(); closeRound(r, e, q.cash); toast(`A bold ask, and they took it: ${fmtMoney(q.cash)} for ${fmtPct(e)}.`, 'good');
+  }
+}
+
+// ---------- Advisor ----------
+function advisorTips() {
+  const tips = []; const add = (p, text, tab) => tips.push({ p, text, tab });
+  const rw = runwayMonths(); const rec = recessionNow(); const L = S.last;
+  if (rw < 6) add(100, `Runway is down to ${fmtRunway(rw)}. Cut marketing, pause hiring, or raise money now.`, rw < 6 && roundStatus().state === 'open' ? 'funding' : 'overview');
+  else if (rw < 12) add(70, `About ${fmtRunway(rw)} of runway. Start planning the next raise before you need it.`, 'funding');
+  if (rec) add(80, `We're in a downturn. Acquisition costs are up about ${Math.round(45 * rec.sev)}% and valuations are down. Protect cash; the good news is it will end.`, null);
+  if (ipoStatus().ok) add(95, `You meet every IPO requirement. Ring the bell on the Funding tab, or keep growing for a bigger debut.`, 'funding');
+  const risky = S.employees.filter((e) => e.revealed && (e.tier === 'star' || e.tier === 'strong') && flightRisk(e) >= 30).sort((a, b) => flightRisk(b) - flightRisk(a));
+  risky.slice(0, 2).forEach((e) => add(85, `${e.name} (${TIER_INFO[e.tier].label}, ${DEPTS[e.dept].name}) hasn't been recognized in ${quartersSinceRecog(e)} quarters. Flight risk is ${riskLabel(flightRisk(e)).toLowerCase()}. A bonus or a clap would help.`, 'team'));
+  S.events.filter((ev) => ev.type === 'overlooked').slice(0, 1).forEach((ev) => { const e = empById(ev.empId); if (e) add(75, `${e.name} is in a rough patch because they feel overlooked. A bonus usually pulls people out of it.`, 'overview'); });
+  S.events.filter((ev) => ev.type === 'transfer').slice(0, 1).forEach((ev) => { const e = empById(ev.empId); if (e) add(55, `${e.first} asked to move to ${DEPTS[ev.to].name}. Answer before next quarter or they'll take the silence personally.`, 'overview'); });
+  const fs = roundStatus(); if (fs.state === 'open') add(65, `The ${fs.r.name} round is open. Investor sentiment is ${S.sentiment >= 1.1 ? 'warm, a good moment' : S.sentiment <= 0.9 ? 'cool, so expect to give up more' : 'neutral'}.`, 'funding');
+  enteredMarkets().filter((m) => !m.home && marketStatus(m).key === 'bad').slice(0, 1).forEach((m) => add(58, `${m.name} has lost money three quarters running. Put a rep there whose trait fits, or accept it as a long bet.`, 'markets'));
+  if (S.product.points >= shipCost()) add(60, `Engineering has enough built to ship v${S.product.level + 1}. Shipping raises prices and lowers churn.`, 'product');
+  if (L && L.coverage < 0.7) add(57, `Support is stretched to ${Math.round(L.coverage * 100)}% of what customers need, and churn is creeping up. An Operations hire would help.`, 'team');
+  if (opsStrain() > 1.1) add(50, `The team has outgrown its operations. Overhead is running ${Math.round((opsStrain() - 1) * 100)}% high until you add Ops capacity.`, 'team');
+  const saturated = enteredMarkets().filter((m) => penetration(m) > 0.55).sort((a, b) => penetration(b) - penetration(a))[0];
+  if (saturated) add(52, `You've reached ${Math.round(penetration(saturated) * 100)}% of the likely buyers in ${saturated.name}. Growth there will keep slowing; the next stretch comes from new markets or a better product.`, 'markets');
+  const home = homeMarket();
+  if (L && home.lastSpend > 350000 * home.size * home.growth * (1 + 0.12 * (S.product.level - 1)) * 0.6) add(45, `Marketing in ${home.name} is hitting diminishing returns. A new market would stretch each dollar further.`, 'markets');
+  if (S.employees.filter((e) => e.dept === 'eng').length === 0) add(72, 'Nobody is building the product. Hire an engineer or two.', 'team');
+  if (L && rw > 30 && S.marketingSpend < 50000 && S.turn > 2) add(40, `You have plenty of runway. Put some of it to work: more marketing or another rep.`, 'overview');
+  if (S.rival.strength >= 0.08) add(35, `${S.rival.name} has gotten stronger with people who used to work here. Keeping your stars matters.`, 'team');
+  // Praise, not just problems
+  const h = S.history;
+  if (h.length >= 2 && h[h.length - 2].arr > 50000) { const g = h[h.length - 1].arr / h[h.length - 2].arr - 1; if (g > 0.2) add(32, `ARR grew ${Math.round(g * 100)}% last quarter. That's a great quarter. Enjoy it.`, null); }
+  if (L && L.net > 0) add(30, `You made an operating profit last quarter. Very few startups can say that.`, null);
+  const stars = S.employees.filter((e) => e.revealed && e.tier === 'star').length;
+  if (stars >= 3) add(25, `You have ${stars} Stars on the team. Whatever you're doing to keep them, keep doing it.`, 'team');
+  if (!tips.length) add(10, `Nothing urgent. Good moment to think about where growth comes from next year.`, null);
+  return tips.sort((a, b) => b.p - a.p).slice(0, 3).map((t) => ({ ...t, level: t.p >= 80 ? 'urgent' : t.p >= 50 ? 'warn' : t.p <= 35 ? 'praise' : 'info' }));
+}
+
+// ---------- Mascots ----------
+function renderMascots() {
+  const adv = $('#advisor'), nr = $('#newsroom');
+  if (UI.screen !== 'game' || !S) { adv.innerHTML = ''; nr.innerHTML = ''; adv.hidden = true; nr.hidden = true; return; }
+  adv.hidden = false; nr.hidden = false;
+  const ind = IND();
+  const tips = UI.tipsOpen ? advisorTips() : [];
+  const unseen = UI.tipsSeenTurn !== S.turn;
+  adv.innerHTML = `${UI.tipsOpen ? `<div class="bubble tip-card" role="region" aria-label="Advice from ${ind.advisor.name}">
+      <div class="bubble-head"><span><strong>${ind.advisor.name}</strong> <span class="muted">your advisor</span></span><button class="x" data-act="toggle-tips" aria-label="Close advice">×</button></div>
+      <ol class="tips">${tips.map((t) => `<li class="lv-${t.level}"><span>${esc(t.text)}</span>${t.tab && t.tab !== UI.tab ? `<button class="link" data-act="tip-go" data-v="${t.tab}">Show me</button>` : ''}</li>`).join('')}</ol></div>` : ''}
+    <button class="mascot-btn" data-act="toggle-tips" aria-expanded="${UI.tipsOpen}" aria-label="${UI.tipsOpen ? 'Close' : 'Open'} advice from ${ind.advisor.name} the ${ind.advisor.kind}">
+      <span class="walker${UI.tipsOpen ? ' still' : ''}"><span class="bob">${mascotSVG(ind.advisor.kind)}</span>${!UI.tipsOpen && unseen ? '<span class="badge">Tip</span>' : ''}</span>
+      <span class="mascot-label">${ind.advisor.name}</span></button>`;
+  const items = S.newsQueue;
+  const idx = Math.min(UI.newsIdx, Math.max(0, items.length - 1));
+  const it = items[idx];
+  nr.innerHTML = `${UI.newsOpen && it ? `<div class="bubble news-card k-${it.kind}" role="status" aria-live="polite" ${''}data-idx="${idx}">
+      <div class="bubble-head"><span><strong>${ind.news.name}</strong> <span class="muted">the newsroom · ${clockLabel(it.turn)}</span></span><button class="x" data-act="news-close" aria-label="Dismiss news">×</button></div>
+      <p>${esc(it.text)}</p>
+      <div class="bubble-foot"><span class="muted">${idx + 1} of ${items.length}</span>${idx < items.length - 1 ? '<button class="btn small" data-act="news-next">Next</button>' : '<button class="btn small" data-act="news-close">Done</button>'}</div></div>` : ''}
+    <button class="mascot-btn" data-act="news-toggle" aria-label="${ind.news.name}, the newsroom${items.length ? ': ' + items.length + ' new' : ''}">
+      <span class="perch"><span class="bob slow">${mascotSVG(ind.news.kind)}</span>${!UI.newsOpen && items.length ? `<span class="badge count">${items.length}</span>` : ''}</span>
+      <span class="mascot-label">${ind.news.name}</span></button>`;
+}
+const narrow = () => window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
+
+// ---------- Report ----------
+function renderReport() {
+  applyIndustryTheme(S.industry);
+  const g = S.gameOver; const st = S.stats;
+  const value = g.kind === 'acquired' ? g.offer : g.kind === 'ipo' ? g.ipoVal : g.kind === 'bankrupt' ? 0 : S.valuation;
+  const stake = g.kind === 'ipo' ? S.founderOwnership * 0.85 : S.founderOwnership;
+  const years = (S.turn / 4).toFixed(S.turn % 4 ? 1 : 0);
+  let eyebrow, title, verdict;
+  if (g.kind === 'acquired') {
+    eyebrow = `Acquired by ${g.buyer} · ${clockLabel(S.turn)}`;
+    title = g.verdict.key === 'great' ? 'Sold at the right moment.' : g.verdict.key === 'ok' ? 'A good exit.' : 'An early exit.';
+    if (value >= 1e9) title = 'A billion-dollar exit.';
+    verdict = g.verdict.text;
+  } else if (g.kind === 'ipo') {
+    eyebrow = `Initial public offering · ${clockLabel(S.turn)}`;
+    title = value >= 1e9 ? 'A billion-dollar public company.' : 'A public company.';
+    verdict = `${S.company} listed at ${fmtMoney(value)} after a first-day pop, on ${fmtMoney(currentARR())} of ARR. New shares diluted your stake to ${fmtPct(stake)}.`;
+  } else if (g.kind === 'bankrupt') {
+    eyebrow = `Closed · ${clockLabel(S.turn)}`;
+    title = 'The money ran out.';
+    verdict = `After ${years} years, ${S.company} couldn't make payroll. At its peak it was worth ${fmtMoney(st.peakValuation)} on ${fmtMoney(st.peakARR)} of ARR. Most companies end this way; the lessons are real.`;
+  } else {
+    eyebrow = `The clock ran out · ${S.horizon} years`;
+    title = value >= 1e9 ? 'A billion-dollar company.' : value >= 2.5e8 ? 'A serious company.' : value >= 5e7 ? 'A real business.' : value >= 1e7 ? 'A small, living company.' : 'Still standing.';
+    verdict = `After ${S.horizon} years, ${S.company} is worth ${fmtMoney(value)} on ${fmtMoney(currentARR())} of ARR, ${arrGrowthYoY() > 0.3 ? 'and still growing fast' : arrGrowthYoY() > 0 ? 'and still growing' : 'though growth has stalled'}.`;
+  }
+  const lvl = S.product.level;
+  const stars = S.employees.filter((e) => e.tier === 'star').length;
+  const recCount = S.recessions.filter((r) => r.announced).length;
+  const recap = [
+    `You hired ${st.hires + 3} people in ${years} years, counting the founding three. ${plural(st.fires, 'was', 'were')} let go and ${st.resigned} resigned${st.retained ? `; ${plural(st.retained, 'was', 'were')} talked into staying` : ''}${st.lostNegotiations ? ` and ${plural(st.lostNegotiations, 'counter-offer', 'counter-offers')} fell short` : ''}.`,
+    `${plural(st.bonuses, 'bonus', 'bonuses')} and ${plural(st.claps, 'clap', 'claps')}.${st.calcified ? ` ${plural(st.calcified, 'temporary slump or streak', 'temporary slumps or streaks')} became permanent.` : ''} ${stars ? `You finished with ${stars} Star${stars > 1 ? 's' : ''} on a team of ${S.employees.length}.` : `No Stars on the final team of ${S.employees.length}.`}`,
+    st.transfers || st.reassigns ? `${st.transfers} department transfer${st.transfers === 1 ? '' : 's'} and ${st.reassigns} sales reassignment${st.reassigns === 1 ? '' : 's'}.` : 'Nobody changed roles. Everyone stayed where you first put them.',
+    `${st.ships} release${st.ships === 1 ? '' : 's'} shipped, reaching v${lvl} (${stageFor(lvl).cur.name}).`,
+    S.funding.raised.length ? `Raised ${S.funding.raised.length} round${S.funding.raised.length > 1 ? 's' : ''} totaling ${fmtMoney(st.raised)}, through ${S.funding.raised[S.funding.raised.length - 1].name}.${st.walkedAway ? ` Walked away from the table ${st.walkedAway} time${st.walkedAway > 1 ? 's' : ''}.` : ''}` : 'Bootstrapped the whole way. You never sold a share to investors.',
+    `Operated in ${enteredMarkets().length} market${enteredMarkets().length > 1 ? 's' : ''}${S.scoutCount ? `, after scouting ${S.scoutCount} new one${S.scoutCount > 1 ? 's' : ''}` : ''}.`,
+    st.toRival ? `${st.toRival} former employee${st.toRival > 1 ? 's' : ''} went to ${S.rival.name}.` : `Nobody you lost ended up at ${S.rival.name}.`,
+    recCount ? `Lived through ${recCount} downturn${recCount > 1 ? 's' : ''}.` : 'No downturn hit while you were running things.',
+    S.offersDeclined.length ? `Turned down ${S.offersDeclined.length} acquisition offer${S.offersDeclined.length > 1 ? 's' : ''}, the best at ${fmtMoney(Math.max(...S.offersDeclined.map((o) => o.offer)))}.` : null,
+  ].filter(Boolean);
+  $('#app').innerHTML = `
+  <div class="report-wrap"><article class="report">
+    <p class="eyebrow">${esc(eyebrow)}</p>
+    <h1>${esc(title)}</h1>
+    <p class="report-co">${esc(S.company)} · ${IND().name} · ${DIF().name} · ${S.horizon}-year game</p>
+    <p class="prose lead">${esc(verdict)}</p>
+    <dl class="report-nums">
+      <div><dt>${g.kind === 'acquired' ? 'Sale price' : g.kind === 'ipo' ? 'Listing value' : 'Final valuation'}</dt><dd>${fmtMoney(value)}</dd></div>
+      <div><dt>Your stake</dt><dd>${fmtPct(stake)}</dd></div>
+      <div><dt>Worth to you</dt><dd>${fmtMoney(value * stake)}</dd></div>
+      <div><dt>Final ARR</dt><dd>${fmtMoney(currentARR())}</dd></div>
+      <div><dt>Peak ARR</dt><dd>${fmtMoney(st.peakARR)}</dd></div>
+      <div><dt>Team</dt><dd>${S.employees.length}</dd></div>
+    </dl>
+    <section><h2>How you played it</h2><ul class="recap">${recap.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></section>
+    <section><h2>ARR and cash, every quarter</h2>${lineChart([{ label: 'ARR', color: 'var(--accent)', values: S.history.map((h) => h.arr) }, { label: 'Cash', color: 'var(--second)', values: S.history.map((h) => h.cash) }])}</section>
+    <div class="report-actions"><button class="btn primary big" data-act="new-game">Found another company</button></div>
+  </article></div>`;
+}
+// "1 was" / "3 were", "1 bonus" / "2 bonuses"
+function plural(n, one, many) { return `${n} ${n === 1 ? one : many}`; }
+function toReport() {
+  $('#toast-root').innerHTML = '';
+  S.modalQueue = [];
+  UI.screen = 'report'; UI.tipsOpen = false; UI.newsOpen = false;
+  render();
+  const root = $('#modal-root'); root.innerHTML = ''; root.hidden = true; document.body.classList.remove('modal-open');
+  window.scrollTo(0, 0);
+  if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+  document.documentElement.scrollTop = 0; document.body.scrollTop = 0;
+}
+
+// ---------- Render ----------
+function render() {
+  if (UI.screen === 'setup' || !S) renderSetup();
+  else if (UI.screen === 'report') renderReport();
+  else renderGame();
+  renderModal();
+  renderMascots();
+}
+
+// ---------- Actions ----------
+function need(cost) { if (S.cash < cost) { toast(`That costs ${fmtMoney(cost)} and you have ${fmtMoney(S.cash)}.`, 'bad'); return false; } return true; }
+function afterAdvance() {
+  UI.tipsOpen = false; UI.pendingTransfer = {}; UI.pendingMarket = {}; UI.confirmFire = null;
+  UI.newsIdx = 0; UI.newsOpen = S.newsQueue.length > 0;
+  if (S.gameOver) { toReport(); return; }
+  render();
+}
+const ACTIONS = {
+  'suggest-name': () => { UI.setup.name = genCompanyName(); render(); },
+  'pick-industry': (d) => { UI.setup.industry = d.v; render(); },
+  'pick-difficulty': (d) => { UI.setup.difficulty = d.v; render(); },
+  'pick-horizon': (d) => { UI.setup.horizon = +d.v; render(); },
+  start: () => {
+    const name = UI.setup.name.trim() || genCompanyName();
+    newGame({ company: name, industry: UI.setup.industry, difficulty: UI.setup.difficulty, horizon: UI.setup.horizon });
+    Object.assign(UI, { screen: 'game', tab: 'overview', newsOpen: true, newsIdx: 0, tipsOpen: false, tipsSeenTurn: -1, teamFilter: 'all', hireMarket: null, pendingTransfer: {}, pendingMarket: {}, confirmFire: null });
+    render(); window.scrollTo(0, 0);
+  },
+  'new-game': () => { S = null; UI.screen = 'setup'; render(); window.scrollTo(0, 0); },
+  advance: () => { if (advanceDisabled()) return; S.newsQueue = []; if (advanceQuarter()) afterAdvance(); },
+  tab: (d) => { UI.tab = d.v; render(); },
+  'tip-go': (d) => { UI.tab = d.v; UI.tipsOpen = false; render(); window.scrollTo(0, 0); },
+  'toggle-tips': () => { UI.tipsOpen = !UI.tipsOpen; UI.tipsSeenTurn = S.turn; if (UI.tipsOpen && narrow()) UI.newsOpen = false; renderMascots(); },
+  'news-toggle': () => { UI.newsOpen = !UI.newsOpen && S.newsQueue.length > 0; if (!S.newsQueue.length) toast('No news since you last checked.'); if (UI.newsOpen && narrow()) UI.tipsOpen = false; renderMascots(); },
+  'news-next': () => { UI.newsIdx++; renderMascots(); },
+  'news-close': () => { S.newsQueue = []; UI.newsIdx = 0; UI.newsOpen = false; renderMascots(); },
+  hire: (d) => {
+    const sal = DEPTS[d.dept].salary * DIF().salary * wageIndex();
+    if (!need(hireFee(sal) * 1.15)) return;
+    const mId = d.dept === 'sales' ? (UI.hireMarket != null && marketById(UI.hireMarket).entered ? UI.hireMarket : homeMarket().id) : null;
+    const e = hire(d.dept, mId); UI.newsOpen = true; UI.newsIdx = S.newsQueue.length - 1;
+    toast(`${e.name} joins ${DEPTS[e.dept].name} at ${fmtMoney(e.salary)}/yr.`); render();
+  },
+  bonus: (d) => { const e = empById(+d.id); if (!e || S.turn < e.bonusReadyTurn || !need(bonusCost(e))) return; toast(giveBonus(e), 'good'); render(); },
+  clap: (d) => { const e = empById(+d.id); if (!e || S.turn < e.clapReadyTurn) return; const msg = giveClap(e); toast(msg || 'You’ve used all your claps this quarter.', msg ? 'good' : 'bad'); render(); },
+  fire: (d) => {
+    const e = empById(+d.id); if (!e) return;
+    if (UI.confirmFire !== e.id) { UI.confirmFire = e.id; render(); return; }
+    if (!need(severance(e))) return;
+    UI.confirmFire = null; fire(e); UI.newsOpen = true; UI.newsIdx = S.newsQueue.length - 1; render();
+  },
+  'fire-cancel': () => { UI.confirmFire = null; render(); },
+  'transfer-confirm': (d) => { const e = empById(+d.id); const to = UI.pendingTransfer[d.id]; delete UI.pendingTransfer[d.id]; if (e && to) { transfer(e, to); toast(`${e.first} starts in ${DEPTS[to].name} this quarter. Their new performance level shows next quarter.`); } render(); },
+  'transfer-cancel': (d) => { delete UI.pendingTransfer[d.id]; render(); },
+  'market-confirm': (d) => { const e = empById(+d.id); const to = UI.pendingMarket[d.id]; delete UI.pendingMarket[d.id]; if (e && to != null) { const f = reassignMarket(e, to); if (f) toast(`${e.first} now covers ${marketById(to).name}. ${f.text}`, f.ok ? 'good' : 'bad'); } render(); },
+  'market-cancel': (d) => { delete UI.pendingMarket[d.id]; render(); },
+  'approve-request': (d) => { const e = empById(+d.id); if (e && e.request) { const to = e.request; transfer(e, to, 'request'); toast(`${e.first} is moving to ${DEPTS[to].name}.`); } render(); },
+  'decline-request': (d) => {
+    const e = empById(+d.id); if (!e) return;
+    e.request = null; e.grievance = Math.min(20, e.grievance + 6); addHistory(e, 'Transfer request declined');
+    S.events = S.events.filter((ev) => !(ev.type === 'transfer' && ev.empId === e.id));
+    toast(`${e.first} took it professionally, but they're disappointed.`); render();
+  },
+  'team-filter': (d) => { UI.teamFilter = d.v; render(); },
+  sort: (d) => { if (UI.sort.key === d.v) UI.sort.dir *= -1; else UI.sort = { key: d.v, dir: d.v === 'salary' || d.v === 'output' || d.v === 'tenure' ? -1 : 1 }; render(); },
+  'enter-market': (d) => { const m = marketById(+d.id); if (!m || m.entered || !need(m.entry)) return; enterMarket(m); UI.newsOpen = true; UI.newsIdx = S.newsQueue.length - 1; render(); },
+  scout: () => { if (!need(scoutCost())) return; scoutMarket(); UI.newsOpen = true; UI.newsIdx = S.newsQueue.length - 1; render(); },
+  ship: () => { if (!need(shipCash())) return; if (shipProduct()) { UI.newsOpen = true; UI.newsIdx = S.newsQueue.length - 1; } render(); },
+  'open-funding': () => { openFunding(); render(); },
+  'fund-close': () => { closeModal(); render(); },
+  'fund-offer': () => { const m = S.modalQueue[0]; if (m && m.type === 'funding') submitFundingOffer(m); render(); },
+  'counter-accept': () => { const m = S.modalQueue[0]; closeModal(); closeRound(ROUNDS[m.roundIdx], m.theirEq, m.cash); toast(`Done: ${fmtMoney(m.cash)} for ${fmtPct(m.theirEq)}.`, 'good'); render(); },
+  'counter-middle': () => {
+    const m = S.modalQueue[0]; const r = ROUNDS[m.roundIdx];
+    if (chance(m.midP)) { closeModal(); closeRound(r, m.midEq, m.cash); replaceOrPush({ type: 'result', eyebrow: `${r.name} round`, title: 'They met you halfway', text: `${m.investor} agreed: ${fmtMoney(m.cash)} for ${fmtPct(m.midEq)}. A good negotiation.` }); }
+    else { closeModal(); walkAwayFromRound(); replaceOrPush({ type: 'result', eyebrow: `${r.name} round`, title: 'No deal', text: `${m.investor} wouldn't move and the talks ended. Investors will take meetings again in two quarters.` }); }
+    render();
+  },
+  'counter-walk': () => { closeModal(); walkAwayFromRound(); toast('You walked away. Investors will talk again in two quarters.'); render(); },
+  retain: (d) => {
+    const m = S.modalQueue[0]; const e = empById(m.empId); closeModal();
+    const opt = d.v === 'none' ? null : retainOptions(e).find((o) => o.key === d.v);
+    const res = resolveRetain(e, opt, m.dest);
+    if (opt) replaceOrPush({ type: 'result', eyebrow: res.ok ? 'They’re staying' : 'They’re leaving', title: res.ok ? `${e.first} stays` : `${e.first} said no`, text: res.msg });
+    else toast(res.msg);
+    render();
+  },
+  'result-ok': () => { closeModal(); render(); },
+  'acq-accept': () => { const m = S.modalQueue[0]; endGame('acquired', { buyer: m.buyer, offer: m.offer, verdict: acquisitionVerdict(m.offer) }); toReport(); },
+  'acq-decline': () => { const m = S.modalQueue[0]; S.offersDeclined.push({ buyer: m.buyer, offer: m.offer, turn: S.turn }); log('funding', `Declined ${m.buyer}'s ${fmtMoney(m.offer)} offer.`); closeModal(); render(); },
+  'bridge-accept': () => { const amt = bridgeAmount(); S.cash += amt; S.founderOwnership *= 0.88; S.capTable.forEach((h) => { h.pct *= 0.88; }); S.capTable.push({ name: 'Bridge lenders', pct: 0.12 }); S.bridgeUsed = true; closeModal(); news(`An emergency bridge of ${fmtMoney(amt)} keeps the lights on, at a steep 12%.`, 'funding'); UI.newsOpen = true; render(); },
+  'bridge-decline': () => { endGame('bankrupt'); toReport(); },
+  ipo: () => { if (!ipoStatus().ok) return; endGame('ipo', { ipoVal: S.valuation * 1.2 }); toReport(); },
+};
+function replaceOrPush(m) { S.modalQueue.unshift(m); }
+
+document.addEventListener('click', (ev) => {
+  const el = ev.target.closest('[data-act]');
+  if (!el || el.disabled) return;
+  const fn = ACTIONS[el.dataset.act];
+  if (fn) { ev.preventDefault(); fn(el.dataset, el); }
+});
+document.addEventListener('input', (ev) => {
+  const el = ev.target; const k = el.dataset && el.dataset.input;
+  if (k === 'co-name') UI.setup.name = el.value;
+  else if (k === 'marketing') { S.marketingSpend = +el.value; const v = $('#mkt-val'); if (v) v.textContent = fmtMoney(S.marketingSpend) + '/q'; renderTopbar(); }
+  else if (k === 'fund-eq') { const m = S.modalQueue[0]; if (m && m.type === 'funding') { m.eq = +el.value / 1000; updateFundingQuote(m); } }
+});
+document.addEventListener('change', (ev) => {
+  const el = ev.target; const k = el.dataset && el.dataset.change;
+  if (k === 'transfer-select') { if (el.value) UI.pendingTransfer[el.dataset.id] = el.value; else delete UI.pendingTransfer[el.dataset.id]; render(); }
+  else if (k === 'market-select') { UI.pendingMarket[el.dataset.id] = +el.value; render(); }
+  else if (k === 'hire-market') { UI.hireMarket = +el.value; }
+  else if (el.dataset && el.dataset.input === 'marketing') render();
+});
+document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape' && S && S.modalQueue[0] && S.modalQueue[0].type === 'funding') { closeModal(); render(); }
+});
+
+// ---------- Test hooks ----------
+window.BDC = {
+  get S() { return S; }, UI, ACTIONS, setSeed, newGame, advanceQuarter, render, toReport, afterAdvance,
+  helpers: { totalCustomers, totalRevenue, currentARR, runwayMonths, projectedNet, roundStatus, fundingTerms, fundingQuote, flightRisk, transferOdds, empOutput, setupRunway, advisorTips, shipCost, ipoStatus, computeValuation },
+};
+
+// ---------- Boot ----------
+const hot = window.claude && window.claude.hot;
+if (hot && hot.snapshot) hot.snapshot(() => ({ S, UI: { ...UI }, seed: _seed }));
+function boot(data) {
+  if (data && data.S) { S = data.S; Object.assign(UI, data.UI || {}); if (data.seed != null) _seed = data.seed; }
+  render();
+}
+if (hot && hot.ready) hot.ready(boot); else boot((hot && hot.data) || {});
+
+</script>
+</body>
+</html>
